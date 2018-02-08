@@ -20,6 +20,7 @@ router.post('/start', async (req, res) => {
     if (req.query.model) args.push('--model', path.join(config.get('models.root'), req.query.model));
     if (req.query.controller) args.push('--' + req.query.controller);
     pyshell = new PythonShell('manage.py', {
+        pythonPath: config.get('car.pythonPath'),
         scriptPath: config.get('car.path'),
         pythonOptions: ['-u'],
         args,
