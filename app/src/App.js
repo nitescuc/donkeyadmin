@@ -36,7 +36,7 @@ class App extends Component {
     const self = this;
     return (e) => {
       executeLink(self.state.apiBaseUrl, {
-        $url: '/drive/start?controller=pirf',
+        $url: '/drive/start?controller=pirf&sonar=yes',
         $method: 'POST'
       }, self.onMessage);
     }
