@@ -16,9 +16,9 @@ class Car {
         //
         this.remote = new RemoteController({
             channels: [{
-                pin: 18
-            }, {
                 pin: 23
+            }, {
+                pin: 18
             }, { 
                 pin: 22
             }]
