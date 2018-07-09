@@ -2,9 +2,7 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import Tubes from './components/tubes';
-import Models from './components/models';
-import MessageBox from './components/messages';
+import Router from './components/Router';
 
 import { executeLink } from './api/models.api';
 
@@ -51,17 +49,6 @@ class App extends Component {
     }
   }
   //
-  onMessage() {
-    const self = this;
-    return (message) => {
-      const messages = self.state.messages;
-      messages.unshift(message);
-      self.setState({
-        messages
-      })
-    }
-  }
-  //
   render() {
     return (
       <div className="App">
@@ -76,21 +63,9 @@ class App extends Component {
             </div>          
             </div>
           </div>
-          <div className="row">
-            <div className="col-md-6">
-              <Tubes apiBaseUrl={this.state.apiBaseUrl} onMessage={this.onMessage()} />
-            </div>
-            <div className="col-md-6">
-              <Models apiBaseUrl={this.state.apiBaseUrl} onMessage={this.onMessage()} />
-            </div>
-          </div>
-          <div className = "row">
-            <div className="col-md-12">
-              <MessageBox apiBaseUrl={this.state.apiBaseUrl} onMessage={this.onMessage()} messages={this.state.messages} />
-            </div>
+              <Router apiBaseUrl={this.state.apiBaseUrl} />
           </div>
         </div>
-      </div>
     );
   }
 }

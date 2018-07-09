@@ -7,8 +7,22 @@ const router = express.Router();
 
 let pyshell = null;
 let options = {};
+let status = {
+    angle: 0,
+    throttle: 0,
+    mode: 'user',
+    recording: false
+}; 
 
 router.post('/start', async (req, res) => {
+    //
+    status = {
+        angle: 0,
+        throttle: 0,
+        mode: 'user',
+        recording: false
+    };
+    //
     if (pyshell) {
         return res.status(400).json({
             message: 'Already running, stop first'
@@ -61,6 +75,17 @@ router.post('/stop', async (req, res) => {
         status: 'STOPPED'
     });
 });
+
+// drive route for donkey
+router.get('/controller', async (req, res) => {
+    res.json(status);
+});
+
+// drive route for donkey
+router.put('/controller', async (req, res) => {
+    res.json({ status: "OK"});
+});
+
 
 router.setup = (opt) => {
     options = Object.assign(options, opt);

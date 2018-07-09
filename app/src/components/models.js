@@ -55,7 +55,7 @@ class Models extends Component {
                     </div>                   
                     
                 </form>
-                <div style={{ height: '280px', overflow: 'auto' }}>
+                <div>
                     <ul className="list-group">
                     {(this.state.models || []).map((model, idx) => {
                         return <li className="list-group-item" key={idx}>
