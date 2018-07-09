@@ -39,7 +39,7 @@ class Car {
         //
         this.actuator = new Actuator();
         
-        setTimeout(1000, console.log(JSON.stringify(status)));
+        setTimeout(1000, () => console.log(JSON.stringify(this.status)));
     }
     async initialize() {
         await this.actuator.initialize();
