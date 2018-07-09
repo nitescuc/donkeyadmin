@@ -8,6 +8,9 @@ const io = require('socket.io')(http);
 const tubes = require('./src/tubes');
 const models = require('./src/models');
 const drive = require('./src/drive');
+
+const Car = require('./src/car');
+
 drive.setup({
     io
 });
@@ -24,5 +27,9 @@ app.use(express.static(path.join(__dirname, '../app/build'), {
 app.use('/tubes', tubes);
 app.use('/models', models);
 app.use('/drive', drive);
+
+const car = new Car({
+    io
+});
 
 http.listen(8080);

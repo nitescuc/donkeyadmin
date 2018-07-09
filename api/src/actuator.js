@@ -26,3 +26,5 @@ class Actuator {
         this.pwm.setPulseLength(1, value);
     }
 }
+
+module.exports = Actuator;
