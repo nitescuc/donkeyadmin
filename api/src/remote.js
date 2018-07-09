@@ -23,6 +23,7 @@ class RemoteController {
                 level,
                 gpio: new Gpio(pin, {
                     mode: Gpio.INPUT,
+                    pullUpDown: Gpio.PUD_UP,
                     alert: true
                 }),
                 callbacks: []
