@@ -4,14 +4,14 @@ const RemoteController = require('./remote');
 const Actuator = require('./actuator');
 
 class Car {
-    status = {
-        leftDistance: 0,
-        frontDistance: 0,
-        steering: 0,
-        throttle: 0
-    }
     constructor(options) {
-        this.io = options.io;
+        this.status = {
+            leftDistance: 0,
+            frontDistance: 0,
+            steering: 0,
+            throttle: 0
+        }
+            this.io = options.io;
         this.driveMode = "user";
         this.remote = new RemoteController({
             channels: [18,23,22]

@@ -3,12 +3,11 @@
 const Gpio = require('pigpio').Gpio;
 
 class RemoteController {
-    channels = [];
-
     constructor(config) {
         // config is:
         //   channels: [{ pin, level }, {...}] || [pin, ...]
         this.config = config;
+        this.channels = [];
         //
         this.channels = (this.config.channels || []).map((channel) => {
             let pin, level;
