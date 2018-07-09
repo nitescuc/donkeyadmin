@@ -11,25 +11,38 @@ class Car {
             steering: 0,
             throttle: 0
         }
-            this.io = options.io;
+        this.io = options.io;
         this.driveMode = "user";
+        //
         this.remote = new RemoteController({
-            channels: [18,23,22]
+            channels: [{
+                pin: 18
+            }, {
+                pin: 23
+            }, { 
+                pin: 22
+            }]
         });
-        this.remote.addListener(18, (value) => {
+        this.remote.addListener(0, (value) => {
             this.status.steering = value;
             if (this.driveMode === "user") this.actuator.setSteering(value);
         });
-        this.remote.addListener(23, (value) => {
+        this.remote.addListener(1, (value) => {
             this.status.throttle = value;
             if (this.driveMode === "user") this.actuator.setThrottle(value);
         });
-        this.remote.addListener(22, (value) => {
+        this.remote.addListener(2, (value) => {
             if (this.status.throttle < 100) return;
             if (this.driveMode === "user") this.driveMode = "auto";
             else this.driveMode = "user";
         });
+        //
+        this.actuator = new Actuator();
+        
         setTimeout(1000, console.log(JSON.stringify(status)));
+    }
+    async initialize() {
+        await this.actuator.initialize();
     }
     autoDrive(status) {
 

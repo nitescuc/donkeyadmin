@@ -31,5 +31,6 @@ app.use('/drive', drive);
 const car = new Car({
     io
 });
+car.initialize();
 
 http.listen(8080);
