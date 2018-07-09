@@ -1,3 +1,5 @@
+import { setTimeout } from 'timers';
+
 "use strict"
 
 const RemoteController = require('./remote');
@@ -29,6 +31,7 @@ class Car {
             if (this.driveMode === "user") this.driveMode = "auto";
             else this.driveMode = "user";
         });
+        setTimeout(1000, console.log(JSON.stringify(status)));
     }
     autoDrive(status) {
 
