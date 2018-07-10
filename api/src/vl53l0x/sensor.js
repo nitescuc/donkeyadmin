@@ -8,7 +8,7 @@
 const _ = require('lodash');
 
 const EventEmitter = require('events');
-const DexterI2C = require('../dexterI2c');
+const DexterI2C = require('./dexterI2c');
 
 class Sensor extends EventEmitter {
     static WATCH_DELAY = 100;
