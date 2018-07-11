@@ -8,6 +8,7 @@ const config = require('config');
 
 const RemoteController = require('./remote');
 const Actuator = require('./actuator');
+const DistanceArray = require('./distance');
 
 const _getI2C = async () => {
     return new Promise((resolve, reject) => {
@@ -52,6 +53,15 @@ class Car {
         });
         //
         this.actuator = new Actuator();
+        this.distanceArray = new DistanceArray({
+            sensors: [{
+                resetPin: 26,
+                address: 0x2A
+            }, {
+                resetPin: 19,
+                address: 0x29
+            }]
+        });
         //
         this.pyshell = new PythonShell('autopilot.py', {
             pythonPath: config.get('car.pythonPath'),
@@ -77,6 +87,15 @@ class Car {
         await this.actuator.initialize({
             i2c: this.i2c
         });
+        await this.distanceArray.initialize({
+            i2c: this.i2c
+        });
+        this.distanceArray.on('data', (data) => {
+            this.status.frontDistance = data[0];
+            this.status.leftDistance = data[1];
+            this.autoDrive(this.status);
+        });
+        this.distanceArray.startAcquisition(100);
     }
     autoDrive(status) {
         if (this.mode !== 'auto') return;

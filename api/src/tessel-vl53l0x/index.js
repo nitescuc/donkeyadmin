@@ -32,11 +32,11 @@ class VL53LOX extends EventEmitter {
 	------------------------------------------
 	| constructor:void (-)
 	------------------------------------------ */
-	constructor( port ){
+	constructor( config ){
 		super();
 
 		// Assign I2C Address
-		this.i2c = new port.I2C( REGISTRY.I2C_ADDR );
+		this.i2c = config.i2c;
 
 		// Queue system
 		this.queue = new Queue();
@@ -350,12 +350,16 @@ class VL53LOX extends EventEmitter {
 			}, 100);
 		});
 	}
-    setAddress(address, cb) {
-        address &= 0x7f;
-        this._writeRegisters(REGISTRY.I2C_SLAVE_DEVICE_ADDRESS, address, (err) => {
-			if (err) return cb('ERROR change address', err);
-			this.i2c.setAddress(address);
-			cb();
+    setAddress(address) {
+		return new Promise((resolve, reject) => {
+			address &= 0x7f;
+			this._writeRegisters(REGISTRY.I2C_SLAVE_DEVICE_ADDRESS, address, (err) => {
+				if (err) reject(err);
+				else {
+					this.i2c.setAddress(address);
+					resolve();
+				}
+			});
 		});
     }
 	/*
@@ -375,6 +379,9 @@ class VL53LOX extends EventEmitter {
 		},33);
 	}
 
+	writeSingleCaptureStart() {
+		this._writeRegisters(REGISTRY.SYSRANGE_START, 0x02);
+	}
 	/*
 	------------------------------------------
 	| singleCapture:void (-)
@@ -842,13 +849,15 @@ class VL53LOX extends EventEmitter {
 	| single-shot range measurement)
 	| ## TODO: Come back
 	------------------------------------------ */
-	readRangeContinuousMillimeters(){
+	readRangeContinuousMillimeters(waitInterrupt){
 		this._startTimeout();
 
-		while ((this._readRegisters(REGISTRY.RESULT_INTERRUPT_STATUS) & 0x07) == 0) {
-			if (this._checkTimeoutExpired()) {
-				this._did_timeout = true;
-				return 65535;
+		if (waitInterrupt !== false) {
+			while ((this._readRegisters(REGISTRY.RESULT_INTERRUPT_STATUS) & 0x07) == 0) {
+				if (this._checkTimeoutExpired()) {
+					this._did_timeout = true;
+					return 65535;
+				}
 			}
 		}
 
@@ -856,7 +865,7 @@ class VL53LOX extends EventEmitter {
 		// fractional ranging is not enabled
 		let range = this._readRegisters(REGISTRY.RESULT_RANGE_STATUS + 10);
 
-		this._writeRegisters(REGISTRY.SYSTEM_INTERRUPT_CLEAR, 0x01);
+		if (waitInterrupt !== false) this._writeRegisters(REGISTRY.SYSTEM_INTERRUPT_CLEAR, 0x01);
 
 		return range;
 	}

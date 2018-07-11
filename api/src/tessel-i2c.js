@@ -1,8 +1,8 @@
 const i2c = require('i2c-bus');
 
 class I2C {
-    constructor (address) {
-        this.i2c = i2c.openSync(1);
+    constructor (address, in_i2c) {
+        this.i2c = in_i2c || i2c.openSync(1);
         this.address = address;
     }
     transfer(addressToRead, bytesToRead, cb) {
