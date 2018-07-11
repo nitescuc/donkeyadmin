@@ -14,6 +14,9 @@ class I2C {
     send(buffer, cb) {
         this.i2c.writeByte(this.address, buffer[0], buffer[1], cb);
     }
+    setAddress(address) {
+        this.address = address;
+    }
 }
 
 module.exports = I2C;

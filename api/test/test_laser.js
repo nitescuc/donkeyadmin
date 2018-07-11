@@ -2,7 +2,8 @@ const VL53L0X = require('../src/tessel-vl53l0x');
 const I2C = require('../src/tessel-i2c');
 
 const sensor = new VL53L0X({
-    I2C
+    I2C,
+    resetPin: 26
 });
 
 sensor.on('distance', (message) => {
@@ -19,6 +20,10 @@ setTimeout(() => {
     }
 }, 1000);
 */
-setInterval(() => {
+//setInterval(() => {
     sensor.singleCapture();
-}, 100);
+//}, 100);
+
+sensor.setAddress(0x2A);
+
+sensor.singleCapture();
