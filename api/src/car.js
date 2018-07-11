@@ -55,7 +55,7 @@ class Car {
         //
         this.pyshell = new PythonShell('autopilot.py', {
             pythonPath: config.get('car.pythonPath'),
-            scriptPath: path.join(__dirname, 'autopilot.py'),
+            scriptPath: __dirname,
             cwd: __dirname,
             mode: 'json',
             pythonOptions: ['-u']
