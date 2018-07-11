@@ -123,8 +123,8 @@ class VL53L0X extends Sensor {
             // do nothing
         }
 
-        ADDRESS = ADDRESS_DEFAULT;
-        this.i2c.setAddress(ADDRESS);
+        this.ADDRESS = ADDRESS_DEFAULT;
+        this.i2c.setAddress(this.ADDRESS);
 
         let value = true;
         let t1 = new Date().getTime();
@@ -155,14 +155,14 @@ class VL53L0X extends Sensor {
         address &= 0x7f;
         try {
             this.i2c.writeReg8(I2C_SLAVE_DEVICE_ADDRESS, address);
-            ADDRESS = address;
-            this.i2c.setAddress(ADDRESS);
+            this.ADDRESS = address;
+            this.i2c.setAddress(this.ADDRESS);
         } catch (err) {
             console.log(err);
             this.i2c.setAddress(address);
             this.i2c.writeReg8(I2C_SLAVE_DEVICE_ADDRESS, address);
-            ADDRESS = address;
-            this.i2c.setAddress(ADDRESS);
+            this.ADDRESS = address;
+            this.i2c.setAddress(this.ADDRESS);
         }
     }
 
