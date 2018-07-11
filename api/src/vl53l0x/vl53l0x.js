@@ -90,14 +90,14 @@ const ALGO_PHASECAL_LIM                           = 0x30;
 const ALGO_PHASECAL_CONFIG_TIMEOUT                = 0x30;
 
 const ADDRESS_DEFAULT = 0x29;
-const ADDRESS = VL53L0X.ADDRESS_DEFAULT;
+const ADDRESS = ADDRESS_DEFAULT;
 
 const VcselPeriodPreRange = 0;
 const VcselPeriodFinalRange = 1;
 
 class VL53L0X extends Sensor {
     constructor(address = 0x2A, timeout = 0.5, bus = 'RPI_1') {
-        super(bus, VL53L0X.ADDRESS);
+        super(bus, ADDRESS);
 
         this.ioTimeout = 0;
         this.didTimeout = false;
@@ -106,7 +106,7 @@ class VL53L0X extends Sensor {
             this.reset(address);
         } catch (err) {
             console.log(err);
-            this.reset(VL53L0X.ADDRESS);
+            this.reset(ADDRESS);
         }
 
         this.setAddress(address);
@@ -117,19 +117,19 @@ class VL53L0X extends Sensor {
     reset(address) {
         try {
             this.i2c.setAddress(address);
-            this.i2c.writeReg8(VL53L0X.SOFT_RESET_GO2_SOFT_RESET_N, 0x00);
+            this.i2c.writeReg8(SOFT_RESET_GO2_SOFT_RESET_N, 0x00);
         } catch (err) {
             console.log(err);
             // do nothing
         }
 
-        VL53L0X.ADDRESS = VL53L0X.ADDRESS_DEFAULT;
-        this.i2c.setAddress(VL53L0X.ADDRESS);
+        ADDRESS = ADDRESS_DEFAULT;
+        this.i2c.setAddress(ADDRESS);
 
         let value = true;
         let t1 = new Date().getTime();
         while (value) {
-            value = this.i2c.readReg8u(VL53L0X.IDENTIFICATION_MODEL_ID);
+            value = this.i2c.readReg8u(IDENTIFICATION_MODEL_ID);
             const t2 = new Date().getTime();
             if (t2 - t1 >= 0.1) {
                 throw new Error('I/O Error');
@@ -137,12 +137,12 @@ class VL53L0X extends Sensor {
             this.i2c.mwait(1);
         }
 
-        this.i2c.writeReg8(VL53L0X.SOFT_RESET_GO2_SOFT_RESET_N, 0x01);
+        this.i2c.writeReg8(SOFT_RESET_GO2_SOFT_RESET_N, 0x01);
 
         value = false;
         t1 = new Date().getTime();
         while (!value) {
-            value = this.i2c.readReg8u(VL53L0X.IDENTIFICATION_MODEL_ID);
+            value = this.i2c.readReg8u(IDENTIFICATION_MODEL_ID);
             const t2 = new Date().getTime();
             if (t2 - t1 >= 0.1) {
                 throw new Error('I/O Error');
@@ -154,20 +154,20 @@ class VL53L0X extends Sensor {
     setAddress(address) {
         address &= 0x7f;
         try {
-            this.i2c.writeReg8(VL53L0X.I2C_SLAVE_DEVICE_ADDRESS, address);
-            VL53L0X.ADDRESS = address;
-            this.i2c.setAddress(VL53L0X.ADDRESS);
+            this.i2c.writeReg8(I2C_SLAVE_DEVICE_ADDRESS, address);
+            ADDRESS = address;
+            this.i2c.setAddress(ADDRESS);
         } catch (err) {
             console.log(err);
             this.i2c.setAddress(address);
-            this.i2c.writeReg8(VL53L0X.I2C_SLAVE_DEVICE_ADDRESS, address);
-            VL53L0X.ADDRESS = address;
-            this.i2c.setAddress(VL53L0X.ADDRESS);
+            this.i2c.writeReg8(I2C_SLAVE_DEVICE_ADDRESS, address);
+            ADDRESS = address;
+            this.i2c.setAddress(ADDRESS);
         }
     }
 
     init() {
-        this.i2c.writeReg8(VL53L0X.VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV, (this.i2c.readReg8u(VL53L0X.VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV) | 0x01)); //  set bit 0
+        this.i2c.writeReg8(VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV, (this.i2c.readReg8u(VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV) | 0x01)); //  set bit 0
 
         //  "Set I2C standard mode"
         this.i2c.writeReg8(0x88, 0x00);
@@ -181,12 +181,12 @@ class VL53L0X extends Sensor {
         this.i2c.writeReg8(0x80, 0x00);
 
         //  disable SIGNAL_RATE_MSRC (bit 1) and SIGNAL_RATE_PRE_RANGE (bit 4) limit checks
-        this.i2c.writeReg8(VL53L0X.MSRC_CONFIG_CONTROL, (this.i2c.readReg8u(VL53L0X.MSRC_CONFIG_CONTROL) | 0x12));
+        this.i2c.writeReg8(MSRC_CONFIG_CONTROL, (this.i2c.readReg8u(MSRC_CONFIG_CONTROL) | 0x12));
 
         //  set final range signal rate limit to 0.25 MCPS (million counts per second)
         this.setSignalRateLimit(0.25);
 
-        this.i2c.writeReg8(VL53L0X.SYSTEM_SEQUENCE_CONFIG, 0xFF);
+        this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0xFF);
 
         //  VL53L0X_DataInit() end
 
@@ -201,15 +201,15 @@ class VL53L0X extends Sensor {
         //  The SPAD map (RefGoodSpadMap) is read by VL53L0X_get_info_from_device() in
         //  the API, but the same data seems to be more easily readable from
         //  GLOBAL_CONFIG_SPAD_ENABLES_REF_0 through _6, so read it from there
-        const refSpadMap = this.i2c.readRegList(VL53L0X.GLOBAL_CONFIG_SPAD_ENABLES_REF_0, 6);
+        const refSpadMap = this.i2c.readRegList(GLOBAL_CONFIG_SPAD_ENABLES_REF_0, 6);
 
         //  -- VL53L0X_set_reference_spads() begin (assume NVM values are valid)
 
         this.i2c.writeReg8(0xFF, 0x01);
-        this.i2c.writeReg8(VL53L0X.DYNAMIC_SPAD_REF_EN_START_OFFSET, 0x00);
-        this.i2c.writeReg8(VL53L0X.DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD, 0x2C);
+        this.i2c.writeReg8(DYNAMIC_SPAD_REF_EN_START_OFFSET, 0x00);
+        this.i2c.writeReg8(DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD, 0x2C);
         this.i2c.writeReg8(0xFF, 0x00);
-        this.i2c.writeReg8(VL53L0X.GLOBAL_CONFIG_REF_EN_START_SELECT, 0xB4);
+        this.i2c.writeReg8(GLOBAL_CONFIG_REF_EN_START_SELECT, 0xB4);
 
         let firstSpadToEnable;
         if (spadInfo[1]) {
@@ -228,7 +228,7 @@ class VL53L0X extends Sensor {
             }
         }
 
-        this.i2c.writeRegList(VL53L0X.GLOBAL_CONFIG_SPAD_ENABLES_REF_0, refSpadMap);
+        this.i2c.writeRegList(GLOBAL_CONFIG_SPAD_ENABLES_REF_0, refSpadMap);
 
         //  -- VL53L0X_set_reference_spads() end
 
@@ -334,9 +334,9 @@ class VL53L0X extends Sensor {
         //  "Set interrupt config to new sample ready"
         //  -- VL53L0X_SetGpioConfig() begin
 
-        this.i2c.writeReg8(VL53L0X.SYSTEM_INTERRUPT_CONFIG_GPIO, 0x04);
-        this.i2c.writeReg8(VL53L0X.GPIO_HV_MUX_ACTIVE_HIGH, this.i2c.readReg8u(VL53L0X.GPIO_HV_MUX_ACTIVE_HIGH) & ~0x10); //  active low
-        this.i2c.writeReg8(VL53L0X.SYSTEM_INTERRUPT_CLEAR, 0x01);
+        this.i2c.writeReg8(SYSTEM_INTERRUPT_CONFIG_GPIO, 0x04);
+        this.i2c.writeReg8(GPIO_HV_MUX_ACTIVE_HIGH, this.i2c.readReg8u(GPIO_HV_MUX_ACTIVE_HIGH) & ~0x10); //  active low
+        this.i2c.writeReg8(SYSTEM_INTERRUPT_CLEAR, 0x01);
 
         //  -- VL53L0X_SetGpioConfig() end
 
@@ -347,12 +347,12 @@ class VL53L0X extends Sensor {
         //  TCC = Target CentreCheck
         //  -- VL53L0X_SetSequenceStepEnable() begin
 
-        this.i2c.writeReg8(VL53L0X.SYSTEM_SEQUENCE_CONFIG, 0xE8);
+        this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0xE8);
 
         //  -- VL53L0X_SetSequenceStepEnable() end
 
         //  "Recalculate timing budget"
-        this.setMeasurementTimingBudget(VL53L0X.measurementTimingBudgetUs);
+        this.setMeasurementTimingBudget(measurementTimingBudgetUs);
 
         // VL53L0X_constInit() end
 
@@ -360,7 +360,7 @@ class VL53L0X extends Sensor {
 
         // -- VL53L0X_perform_vhv_calibration() begin
 
-        this.i2c.writeReg8(VL53L0X.SYSTEM_SEQUENCE_CONFIG, 0x01);
+        this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0x01);
         if (!this.performSingleRefCalibration(0x40)) {
             return false;
         }
@@ -369,7 +369,7 @@ class VL53L0X extends Sensor {
 
         // -- VL53L0X_perform_phase_calibration() begin
 
-        this.i2c.writeReg8(VL53L0X.SYSTEM_SEQUENCE_CONFIG, 0x02);
+        this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0x02);
         if (!this.performSingleRefCalibration(0x00)) {
             return false;
         }
@@ -377,7 +377,7 @@ class VL53L0X extends Sensor {
         // -- VL53L0X_perform_phase_calibration() end
 
         // "restore the previous Sequence Config"
-        this.i2c.writeReg8(VL53L0X.SYSTEM_SEQUENCE_CONFIG, 0xE8);
+        this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0xE8);
 
         // VL53L0X_PerformRefCalibration() end
 
@@ -390,7 +390,7 @@ class VL53L0X extends Sensor {
         }
 
         // Q9.7 fixed point format (9 integer bits, 7 fractional bits)
-        this.i2c.writeReg16(VL53L0X.FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT, parseInt(limitMcps * (1 << 7), 0));
+        this.i2c.writeReg16(FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT, parseInt(limitMcps * (1 << 7), 0));
         return true;
     }
 
@@ -482,7 +482,7 @@ class VL53L0X extends Sensor {
     }
 
     getSequenceStepEnables() {
-        const sequenceConfig = this.i2c.readReg8u(VL53L0X.SYSTEM_SEQUENCE_CONFIG);
+        const sequenceConfig = this.i2c.readReg8u(SYSTEM_SEQUENCE_CONFIG);
         return {
             'tcc': (sequenceConfig >> 4) & 0x1,
             'msrc': (sequenceConfig >> 2) & 0x1,
@@ -496,15 +496,15 @@ class VL53L0X extends Sensor {
         const SequenceStepTimeouts = { 'pre_range_vcsel_periodPclks': 0, 'final_range_vcsel_periodPclks': 0, 'msrc_dss_tcc_mclks': 0, 'pre_range_mclks': 0, 'final_range_mclks': 0, 'msrc_dss_tcc_us': 0, 'pre_range_us': 0, 'final_range_us': 0 };
         SequenceStepTimeouts.pre_range_vcsel_periodPclks = this.getVcselPulsePeriod(this.VcselPeriodPreRange);
 
-        SequenceStepTimeouts.msrc_dss_tcc_mclks = this.i2c.readReg8u(VL53L0X.MSRC_CONFIG_TIMEOUT_MACROP) + 1;
+        SequenceStepTimeouts.msrc_dss_tcc_mclks = this.i2c.readReg8u(MSRC_CONFIG_TIMEOUT_MACROP) + 1;
         SequenceStepTimeouts.msrc_dss_tcc_us = this.timeoutMclksToMicroseconds(SequenceStepTimeouts.msrc_dss_tcc_mclks, SequenceStepTimeouts.pre_range_vcsel_periodPclks);
 
-        SequenceStepTimeouts.pre_range_mclks = this.decodeTimeout(this.i2c.readReg16u(VL53L0X.PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI));
+        SequenceStepTimeouts.pre_range_mclks = this.decodeTimeout(this.i2c.readReg16u(PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI));
         SequenceStepTimeouts.pre_range_us = this.timeoutMclksToMicroseconds(SequenceStepTimeouts.pre_range_mclks, SequenceStepTimeouts.pre_range_vcsel_periodPclks);
 
         SequenceStepTimeouts.final_range_vcsel_periodPclks = this.getVcselPulsePeriod(this.VcselPeriodFinalRange);
 
-        SequenceStepTimeouts.final_range_mclks = this.decodeTimeout(this.i2c.readReg16u(VL53L0X.FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI));
+        SequenceStepTimeouts.final_range_mclks = this.decodeTimeout(this.i2c.readReg16u(FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI));
 
         if (preRange) {
             SequenceStepTimeouts.final_range_mclks -= SequenceStepTimeouts.preRangeMclks;
@@ -521,9 +521,9 @@ class VL53L0X extends Sensor {
 
     getVcselPulsePeriod(type) {
         if (type === this.VcselPeriodPreRange) {
-            return this.decodeVcselPeriod(this.i2c.readReg8u(VL53L0X.PRE_RANGE_CONFIG_VCSEL_PERIOD));
+            return this.decodeVcselPeriod(this.i2c.readReg8u(PRE_RANGE_CONFIG_VCSEL_PERIOD));
         } else if (type === this.VcselPeriodFinalRange) {
-            return this.decodeVcselPeriod(this.i2c.readReg8u(VL53L0X.FINAL_RANGE_CONFIG_VCSEL_PERIOD));
+            return this.decodeVcselPeriod(this.i2c.readReg8u(FINAL_RANGE_CONFIG_VCSEL_PERIOD));
         }
         return 255;
     }
@@ -590,7 +590,7 @@ class VL53L0X extends Sensor {
             finalRangeTimeoutMclks += timeouts.pre_range_mclks;
         }
 
-        this.i2c.writeReg16(VL53L0X.FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI, this.encodeTimeout(finalRangeTimeoutMclks));
+        this.i2c.writeReg16(FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI, this.encodeTimeout(finalRangeTimeoutMclks));
 
         this.measurementTimingBudgetUs = budgetUs;
 
@@ -621,17 +621,17 @@ class VL53L0X extends Sensor {
     }
 
     performSingleRefCalibration(vhvInitByte) {
-        this.i2c.writeReg8(VL53L0X.SYSRANGE_START, 0x01 | vhvInitByte);
+        this.i2c.writeReg8(SYSRANGE_START, 0x01 | vhvInitByte);
 
         this.startTimeout();
-        while ((this.i2c.readReg8u(VL53L0X.RESULT_INTERRUPT_STATUS) & 0x07) === 0) {
+        while ((this.i2c.readReg8u(RESULT_INTERRUPT_STATUS) & 0x07) === 0) {
             if (this.checkTimeoutExpired()) {
                 return false;
             }
         }
 
-        this.i2c.writeReg8(VL53L0X.SYSTEM_INTERRUPT_CLEAR, 0x01);
-        this.i2c.writeReg8(VL53L0X.SYSRANGE_START, 0x00);
+        this.i2c.writeReg8(SYSTEM_INTERRUPT_CLEAR, 0x01);
+        this.i2c.writeReg8(SYSRANGE_START, 0x00);
 
         return true;
     }
@@ -650,31 +650,31 @@ class VL53L0X extends Sensor {
         this.i2c.writeReg8(0x80, 0x00);
 
         if (periodMs !== 0) {
-            const oscCalibrateVal = this.i2c.readReg16u(VL53L0X.OSC_CALIBRATE_VAL);
+            const oscCalibrateVal = this.i2c.readReg16u(OSC_CALIBRATE_VAL);
 
             if (oscCalibrateVal !== 0) {
                 periodMs *= oscCalibrateVal;
             }
 
-            this.i2c.writeReg32(VL53L0X.SYSTEM_INTERMEASUREMENT_PERIOD, periodMs);
-            this.i2c.writeReg8(VL53L0X.SYSRANGE_START, 0x04);
+            this.i2c.writeReg32(SYSTEM_INTERMEASUREMENT_PERIOD, periodMs);
+            this.i2c.writeReg8(SYSRANGE_START, 0x04);
         } else {
-            this.i2c.writeReg8(VL53L0X.SYSRANGE_START, 0x02);
+            this.i2c.writeReg8(SYSRANGE_START, 0x02);
         }
     }
 
     readRangeContinuousMillimiters() {
         this.startTimeout();
 
-        while ((this.i2c.readReg8u(VL53L0X.RESULT_INTERRUPT_STATUS) & 0x07) === 0) {
+        while ((this.i2c.readReg8u(RESULT_INTERRUPT_STATUS) & 0x07) === 0) {
             if (this.checkTimeoutExpired()) {
                 this.didTimeout = true;
                 console.log('readRangeContinuousMillimiters timeout');
             }
         }
 
-        const range = this.i2c.readReg16u(VL53L0X.RESULT_RANGE_STATUS + 10);
-        this.i2c.writeReg8(VL53L0X.SYSTEM_INTERRUPT_CLEAR, 0x01);
+        const range = this.i2c.readReg16u(RESULT_RANGE_STATUS + 10);
+        this.i2c.writeReg8(SYSTEM_INTERRUPT_CLEAR, 0x01);
         return range;
     }
 
@@ -692,87 +692,87 @@ class VL53L0X extends Sensor {
 
         if (type === this.VcselPeriodPreRange) {
             if (periodPclks === 12) {
-                this.i2c.writeReg8(VL53L0X.PRE_RANGE_CONFIG_VALID_PHASE_HIGH, 0x18);
+                this.i2c.writeReg8(PRE_RANGE_CONFIG_VALID_PHASE_HIGH, 0x18);
             } else if (periodPclks === 14) {
-                this.i2c.writeReg8(VL53L0X.PRE_RANGE_CONFIG_VALID_PHASE_HIGH, 0x30);
+                this.i2c.writeReg8(PRE_RANGE_CONFIG_VALID_PHASE_HIGH, 0x30);
             } else if (periodPclks === 16) {
-                this.i2c.writeReg8(VL53L0X.PRE_RANGE_CONFIG_VALID_PHASE_HIGH, 0x40);
+                this.i2c.writeReg8(PRE_RANGE_CONFIG_VALID_PHASE_HIGH, 0x40);
             } else if (periodPclks === 18) {
-                this.i2c.writeReg8(VL53L0X.PRE_RANGE_CONFIG_VALID_PHASE_HIGH, 0x50);
+                this.i2c.writeReg8(PRE_RANGE_CONFIG_VALID_PHASE_HIGH, 0x50);
             } else {
                 return false;
             }
 
-            this.i2c.writeReg8(VL53L0X.PRE_RANGE_CONFIG_VALID_PHASE_LOW, 0x08);
+            this.i2c.writeReg8(PRE_RANGE_CONFIG_VALID_PHASE_LOW, 0x08);
 
-            this.i2c.writeReg8(VL53L0X.PRE_RANGE_CONFIG_VCSEL_PERIOD, vcselPeriodReg);
+            this.i2c.writeReg8(PRE_RANGE_CONFIG_VCSEL_PERIOD, vcselPeriodReg);
 
-            const newPreRangeTimeoutMclks = VL53L0X.timeoutMicrosecondsToMclks(timeouts.pre_range_us, periodPclks);
+            const newPreRangeTimeoutMclks = timeoutMicrosecondsToMclks(timeouts.pre_range_us, periodPclks);
 
-            this.i2c.writeReg16(VL53L0X.PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI, this.encodeTimeout(newPreRangeTimeoutMclks));
+            this.i2c.writeReg16(PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI, this.encodeTimeout(newPreRangeTimeoutMclks));
 
             const newMsrcTimeoutMclks = this.timeoutMicrosecondsToMclks(timeouts.msrc_dss_tcc_us, periodPclks);
 
             if (newMsrcTimeoutMclks > 256) {
-                this.i2c.writeReg8(VL53L0X.MSRC_CONFIG_TIMEOUT_MACROP, 255);
+                this.i2c.writeReg8(MSRC_CONFIG_TIMEOUT_MACROP, 255);
             } else {
-                this.i2c.writeReg8(VL53L0X.MSRC_CONFIG_TIMEOUT_MACROP, (newMsrcTimeoutMclks - 1));
+                this.i2c.writeReg8(MSRC_CONFIG_TIMEOUT_MACROP, (newMsrcTimeoutMclks - 1));
             }
         } else if (type === this.VcselPeriodFinalRange) {
             if (periodPclks === 8) {
-                this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VALID_PHASE_HIGH, 0x10);
-                this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VALID_PHASE_LOW,  0x08);
-                this.i2c.writeReg8(VL53L0X.GLOBAL_CONFIG_VCSEL_WIDTH, 0x02);
-                this.i2c.writeReg8(VL53L0X.ALGO_PHASECAL_CONFIG_TIMEOUT, 0x0C);
+                this.i2c.writeReg8(FINAL_RANGE_CONFIG_VALID_PHASE_HIGH, 0x10);
+                this.i2c.writeReg8(FINAL_RANGE_CONFIG_VALID_PHASE_LOW,  0x08);
+                this.i2c.writeReg8(GLOBAL_CONFIG_VCSEL_WIDTH, 0x02);
+                this.i2c.writeReg8(ALGO_PHASECAL_CONFIG_TIMEOUT, 0x0C);
                 this.i2c.writeReg8(0xFF, 0x01);
-                this.i2c.writeReg8(VL53L0X.ALGO_PHASECAL_LIM, 0x30);
+                this.i2c.writeReg8(ALGO_PHASECAL_LIM, 0x30);
                 this.i2c.writeReg8(0xFF, 0x00);
             } else if (periodPclks === 10) {
-                this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VALID_PHASE_HIGH, 0x28);
-                this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VALID_PHASE_LOW,  0x08);
-                this.i2c.writeReg8(VL53L0X.GLOBAL_CONFIG_VCSEL_WIDTH, 0x03);
-                this.i2c.writeReg8(VL53L0X.ALGO_PHASECAL_CONFIG_TIMEOUT, 0x09);
+                this.i2c.writeReg8(FINAL_RANGE_CONFIG_VALID_PHASE_HIGH, 0x28);
+                this.i2c.writeReg8(FINAL_RANGE_CONFIG_VALID_PHASE_LOW,  0x08);
+                this.i2c.writeReg8(GLOBAL_CONFIG_VCSEL_WIDTH, 0x03);
+                this.i2c.writeReg8(ALGO_PHASECAL_CONFIG_TIMEOUT, 0x09);
                 this.i2c.writeReg8(0xFF, 0x01);
-                this.i2c.writeReg8(VL53L0X.ALGO_PHASECAL_LIM, 0x20);
+                this.i2c.writeReg8(ALGO_PHASECAL_LIM, 0x20);
                 this.i2c.writeReg8(0xFF, 0x00);
             } else if (periodPclks === 12) {
-                this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VALID_PHASE_HIGH, 0x38);
-                this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VALID_PHASE_LOW,  0x08);
-                this.i2c.writeReg8(VL53L0X.GLOBAL_CONFIG_VCSEL_WIDTH, 0x03);
-                this.i2c.writeReg8(VL53L0X.ALGO_PHASECAL_CONFIG_TIMEOUT, 0x08);
+                this.i2c.writeReg8(FINAL_RANGE_CONFIG_VALID_PHASE_HIGH, 0x38);
+                this.i2c.writeReg8(FINAL_RANGE_CONFIG_VALID_PHASE_LOW,  0x08);
+                this.i2c.writeReg8(GLOBAL_CONFIG_VCSEL_WIDTH, 0x03);
+                this.i2c.writeReg8(ALGO_PHASECAL_CONFIG_TIMEOUT, 0x08);
                 this.i2c.writeReg8(0xFF, 0x01);
-                this.i2c.writeReg8(VL53L0X.ALGO_PHASECAL_LIM, 0x20);
+                this.i2c.writeReg8(ALGO_PHASECAL_LIM, 0x20);
                 this.i2c.writeReg8(0xFF, 0x00);
             } else if (periodPclks === 14) {
-                this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VALID_PHASE_HIGH, 0x48);
-                this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VALID_PHASE_LOW,  0x08);
-                this.i2c.writeReg8(VL53L0X.GLOBAL_CONFIG_VCSEL_WIDTH, 0x03);
-                this.i2c.writeReg8(VL53L0X.ALGO_PHASECAL_CONFIG_TIMEOUT, 0x07);
+                this.i2c.writeReg8(FINAL_RANGE_CONFIG_VALID_PHASE_HIGH, 0x48);
+                this.i2c.writeReg8(FINAL_RANGE_CONFIG_VALID_PHASE_LOW,  0x08);
+                this.i2c.writeReg8(GLOBAL_CONFIG_VCSEL_WIDTH, 0x03);
+                this.i2c.writeReg8(ALGO_PHASECAL_CONFIG_TIMEOUT, 0x07);
                 this.i2c.writeReg8(0xFF, 0x01);
-                this.i2c.writeReg8(VL53L0X.ALGO_PHASECAL_LIM, 0x20);
+                this.i2c.writeReg8(ALGO_PHASECAL_LIM, 0x20);
                 this.i2c.writeReg8(0xFF, 0x00);
             } else {
                 return false;
             }
 
-            this.i2c.writeReg8(VL53L0X.FINAL_RANGE_CONFIG_VCSEL_PERIOD, vcselPeriodReg);
+            this.i2c.writeReg8(FINAL_RANGE_CONFIG_VCSEL_PERIOD, vcselPeriodReg);
             let newFinalRangeTimeoutMclks = this.timeoutMicrosecondsToMclks(timeouts.final_range_us, periodPclks);
 
             if (enables.pre_range) {
                 newFinalRangeTimeoutMclks += timeouts.pre_range_mclks;
             }
 
-            this.i2c.writeReg16(VL53L0X.FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI, this.encodeTimeout(newFinalRangeTimeoutMclks));
+            this.i2c.writeReg16(FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI, this.encodeTimeout(newFinalRangeTimeoutMclks));
         } else {
             return false;
         }
 
         this.setMeasurementTimingBudget(this.measurementTimingBudgetUs);
 
-        const sequenceConfig = this.i2c.readReg8u(VL53L0X.SYSTEM_SEQUENCE_CONFIG);
-        this.i2c.writeReg8(VL53L0X.SYSTEM_SEQUENCE_CONFIG, 0x02);
+        const sequenceConfig = this.i2c.readReg8u(SYSTEM_SEQUENCE_CONFIG);
+        this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0x02);
         this.performSingleRefCalibration(0x0);
-        this.i2c.writeReg8(VL53L0X.SYSTEM_SEQUENCE_CONFIG, sequenceConfig);
+        this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, sequenceConfig);
 
         return true;
     }
@@ -786,10 +786,10 @@ class VL53L0X extends Sensor {
         this.i2c.writeReg8(0xFF, 0x00);
         this.i2c.writeReg8(0x80, 0x00);
 
-        this.i2c.writeReg8(VL53L0X.SYSRANGE_START, 0x01);
+        this.i2c.writeReg8(SYSRANGE_START, 0x01);
 
         this.startTimeout();
-        while (this.i2c.readReg8u(VL53L0X.SYSRANGE_START) & 0x01) {
+        while (this.i2c.readReg8u(SYSRANGE_START) & 0x01) {
             if (this.checkTimeoutExpired()) {
                 this.didTimeout = true;
                 console.log('read_range_single_millimeters timeout');

@@ -168,7 +168,7 @@ class DexterI2C {
         return this.readBytes(1);
     }
 
-    readBytes(length = DexterI2C.BYTES_LENGTH) {
+    readBytes(length = BYTES_LENGTH) {
         const buffer = new Buffer(length);
         return this.get(length, buffer);
     }

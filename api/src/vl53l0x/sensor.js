@@ -23,8 +23,8 @@ class Sensor extends EventEmitter {
         this.lastValue = 0;
         this.currentValue = 0;
         this.streamInterval = this.watchInterval = undefined;
-        this.watchDelay = Sensor.WATCH_DELAY;
-        this.streamDelay = Sensor.STREAM_DELAY;
+        this.watchDelay = WATCH_DELAY;
+        this.streamDelay = STREAM_DELAY;
     }
 
     read() {}
