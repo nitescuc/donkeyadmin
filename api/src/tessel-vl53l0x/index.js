@@ -124,6 +124,9 @@ class VL53LOX extends EventEmitter {
 
 	}
 
+	init() {
+		
+	}
 	/*
 	------------------------------------------
 	| startCapture:void (-)
@@ -611,7 +614,7 @@ class VL53LOX extends EventEmitter {
 		this._startTimeout();
 
 		while ((this._readRegisters(REGISTRY.RESULT_INTERRUPT_STATUS) & 0x07) == 0) {
-			if (checkTimeoutExpired()) {
+			if (this._checkTimeoutExpired()) {
 				this._did_timeout = true;
 				return 65535;
 			}

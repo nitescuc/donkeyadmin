@@ -6,6 +6,7 @@ class I2C {
         this.address = address;
     }
     transfer(addressToRead, bytesToRead, cb) {
+        if (!bytesToRead) bytesToRead = 1;
         this.i2c.readI2cBlock(this.address, addressToRead[0], bytesToRead, new Buffer(bytesToRead), (err, length, buffer) => {
             cb(err, buffer);
         });
