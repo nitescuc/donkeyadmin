@@ -12,6 +12,7 @@ const BYTES_LENGTH = 4;
 class DexterI2C {
 
     constructor(bus, address, opts) {
+        opts = opts || {};
         this.device = opts.device || undefined;
 
         this.busName = bus;
