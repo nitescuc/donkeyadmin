@@ -24,6 +24,9 @@ setTimeout(() => {
     sensor.singleCapture();
 //}, 100);
 
-sensor.setAddress(0x2A);
+sensor.setAddress(0x2A, (err) => {
+    if (err) return console.log('ERROR', err);
+    console.log('Address changed');
+    sensor.singleCapture();
+});
 
-sensor.singleCapture();
