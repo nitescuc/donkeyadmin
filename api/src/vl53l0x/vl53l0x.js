@@ -7,95 +7,95 @@
 
 const Sensor = require('./sensor');
 
+const SYSRANGE_START                              = 0x00;
+
+const SYSTEM_THRESH_HIGH                          = 0x0C;
+const SYSTEM_THRESH_LOW                           = 0x0E;
+
+const SYSTEM_SEQUENCE_CONFIG                      = 0x01;
+const SYSTEM_RANGE_CONFIG                         = 0x09;
+const SYSTEM_INTERMEASUREMENT_PERIOD              = 0x04;
+
+const SYSTEM_INTERRUPT_CONFIG_GPIO                = 0x0A;
+
+const GPIO_HV_MUX_ACTIVE_HIGH                     = 0x84;
+
+const SYSTEM_INTERRUPT_CLEAR                      = 0x0B;
+
+const RESULT_INTERRUPT_STATUS                     = 0x13;
+const RESULT_RANGE_STATUS                         = 0x14;
+
+const RESULT_CORE_AMBIENT_WINDOW_EVENTS_RTN       = 0xBC;
+const RESULT_CORE_RANGING_TOTAL_EVENTS_RTN        = 0xC0;
+const RESULT_CORE_AMBIENT_WINDOW_EVENTS_REF       = 0xD0;
+const RESULT_CORE_RANGING_TOTAL_EVENTS_REF        = 0xD4;
+const RESULT_PEAK_SIGNAL_RATE_REF                 = 0xB6;
+
+const ALGO_PART_TO_PART_RANGE_OFFSET_MM           = 0x28;
+
+const I2C_SLAVE_DEVICE_ADDRESS                    = 0x8A;
+
+const MSRC_CONFIG_CONTROL                         = 0x60;
+
+const PRE_RANGE_CONFIG_MIN_SNR                    = 0x27;
+const PRE_RANGE_CONFIG_VALID_PHASE_LOW            = 0x56;
+const PRE_RANGE_CONFIG_VALID_PHASE_HIGH           = 0x57;
+const PRE_RANGE_MIN_COUNT_RATE_RTN_LIMIT          = 0x64;
+
+const FINAL_RANGE_CONFIG_MIN_SNR                  = 0x67;
+const FINAL_RANGE_CONFIG_VALID_PHASE_LOW          = 0x47;
+const FINAL_RANGE_CONFIG_VALID_PHASE_HIGH         = 0x48;
+const FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT = 0x44;
+
+const PRE_RANGE_CONFIG_SIGMA_THRESH_HI            = 0x61;
+const PRE_RANGE_CONFIG_SIGMA_THRESH_LO            = 0x62;
+
+const PRE_RANGE_CONFIG_VCSEL_PERIOD               = 0x50;
+const PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI          = 0x51;
+const PRE_RANGE_CONFIG_TIMEOUT_MACROP_LO          = 0x52;
+
+const SYSTEM_HISTOGRAM_BIN                        = 0x81;
+const HISTOGRAM_CONFIG_INITIAL_PHASE_SELECT       = 0x33;
+const HISTOGRAM_CONFIG_READOUT_CTRL               = 0x55;
+
+const FINAL_RANGE_CONFIG_VCSEL_PERIOD             = 0x70;
+const FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI        = 0x71;
+const FINAL_RANGE_CONFIG_TIMEOUT_MACROP_LO        = 0x72;
+const CROSSTALK_COMPENSATION_PEAK_RATE_MCPS       = 0x20;
+
+const MSRC_CONFIG_TIMEOUT_MACROP                  = 0x46;
+
+const SOFT_RESET_GO2_SOFT_RESET_N                 = 0xBF;
+const IDENTIFICATION_MODEL_ID                     = 0xC0;
+const IDENTIFICATION_REVISION_ID                  = 0xC2;
+
+const OSC_CALIBRATE_VAL                           = 0xF8;
+
+const GLOBAL_CONFIG_VCSEL_WIDTH                   = 0x32;
+const GLOBAL_CONFIG_SPAD_ENABLES_REF_0            = 0xB0;
+const GLOBAL_CONFIG_SPAD_ENABLES_REF_1            = 0xB1;
+const GLOBAL_CONFIG_SPAD_ENABLES_REF_2            = 0xB2;
+const GLOBAL_CONFIG_SPAD_ENABLES_REF_3            = 0xB3;
+const GLOBAL_CONFIG_SPAD_ENABLES_REF_4            = 0xB4;
+const GLOBAL_CONFIG_SPAD_ENABLES_REF_5            = 0xB5;
+
+const GLOBAL_CONFIG_REF_EN_START_SELECT           = 0xB6;
+const DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD         = 0x4E;
+const DYNAMIC_SPAD_REF_EN_START_OFFSET            = 0x4F;
+const POWER_MANAGEMENT_GO1_POWER_FORCE            = 0x80;
+
+const VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV           = 0x89;
+
+const ALGO_PHASECAL_LIM                           = 0x30;
+const ALGO_PHASECAL_CONFIG_TIMEOUT                = 0x30;
+
+const ADDRESS_DEFAULT = 0x29;
+const ADDRESS = VL53L0X.ADDRESS_DEFAULT;
+
+const VcselPeriodPreRange = 0;
+const VcselPeriodFinalRange = 1;
+
 class VL53L0X extends Sensor {
-    static SYSRANGE_START                              = 0x00;
-
-    static SYSTEM_THRESH_HIGH                          = 0x0C;
-    static SYSTEM_THRESH_LOW                           = 0x0E;
-
-    static SYSTEM_SEQUENCE_CONFIG                      = 0x01;
-    static SYSTEM_RANGE_CONFIG                         = 0x09;
-    static SYSTEM_INTERMEASUREMENT_PERIOD              = 0x04;
-
-    static SYSTEM_INTERRUPT_CONFIG_GPIO                = 0x0A;
-
-    static GPIO_HV_MUX_ACTIVE_HIGH                     = 0x84;
-
-    static SYSTEM_INTERRUPT_CLEAR                      = 0x0B;
-
-    static RESULT_INTERRUPT_STATUS                     = 0x13;
-    static RESULT_RANGE_STATUS                         = 0x14;
-
-    static RESULT_CORE_AMBIENT_WINDOW_EVENTS_RTN       = 0xBC;
-    static RESULT_CORE_RANGING_TOTAL_EVENTS_RTN        = 0xC0;
-    static RESULT_CORE_AMBIENT_WINDOW_EVENTS_REF       = 0xD0;
-    static RESULT_CORE_RANGING_TOTAL_EVENTS_REF        = 0xD4;
-    static RESULT_PEAK_SIGNAL_RATE_REF                 = 0xB6;
-
-    static ALGO_PART_TO_PART_RANGE_OFFSET_MM           = 0x28;
-
-    static I2C_SLAVE_DEVICE_ADDRESS                    = 0x8A;
-
-    static MSRC_CONFIG_CONTROL                         = 0x60;
-
-    static PRE_RANGE_CONFIG_MIN_SNR                    = 0x27;
-    static PRE_RANGE_CONFIG_VALID_PHASE_LOW            = 0x56;
-    static PRE_RANGE_CONFIG_VALID_PHASE_HIGH           = 0x57;
-    static PRE_RANGE_MIN_COUNT_RATE_RTN_LIMIT          = 0x64;
-
-    static FINAL_RANGE_CONFIG_MIN_SNR                  = 0x67;
-    static FINAL_RANGE_CONFIG_VALID_PHASE_LOW          = 0x47;
-    static FINAL_RANGE_CONFIG_VALID_PHASE_HIGH         = 0x48;
-    static FINAL_RANGE_CONFIG_MIN_COUNT_RATE_RTN_LIMIT = 0x44;
-
-    static PRE_RANGE_CONFIG_SIGMA_THRESH_HI            = 0x61;
-    static PRE_RANGE_CONFIG_SIGMA_THRESH_LO            = 0x62;
-
-    static PRE_RANGE_CONFIG_VCSEL_PERIOD               = 0x50;
-    static PRE_RANGE_CONFIG_TIMEOUT_MACROP_HI          = 0x51;
-    static PRE_RANGE_CONFIG_TIMEOUT_MACROP_LO          = 0x52;
-
-    static SYSTEM_HISTOGRAM_BIN                        = 0x81;
-    static HISTOGRAM_CONFIG_INITIAL_PHASE_SELECT       = 0x33;
-    static HISTOGRAM_CONFIG_READOUT_CTRL               = 0x55;
-
-    static FINAL_RANGE_CONFIG_VCSEL_PERIOD             = 0x70;
-    static FINAL_RANGE_CONFIG_TIMEOUT_MACROP_HI        = 0x71;
-    static FINAL_RANGE_CONFIG_TIMEOUT_MACROP_LO        = 0x72;
-    static CROSSTALK_COMPENSATION_PEAK_RATE_MCPS       = 0x20;
-
-    static MSRC_CONFIG_TIMEOUT_MACROP                  = 0x46;
-
-    static SOFT_RESET_GO2_SOFT_RESET_N                 = 0xBF;
-    static IDENTIFICATION_MODEL_ID                     = 0xC0;
-    static IDENTIFICATION_REVISION_ID                  = 0xC2;
-
-    static OSC_CALIBRATE_VAL                           = 0xF8;
-
-    static GLOBAL_CONFIG_VCSEL_WIDTH                   = 0x32;
-    static GLOBAL_CONFIG_SPAD_ENABLES_REF_0            = 0xB0;
-    static GLOBAL_CONFIG_SPAD_ENABLES_REF_1            = 0xB1;
-    static GLOBAL_CONFIG_SPAD_ENABLES_REF_2            = 0xB2;
-    static GLOBAL_CONFIG_SPAD_ENABLES_REF_3            = 0xB3;
-    static GLOBAL_CONFIG_SPAD_ENABLES_REF_4            = 0xB4;
-    static GLOBAL_CONFIG_SPAD_ENABLES_REF_5            = 0xB5;
-
-    static GLOBAL_CONFIG_REF_EN_START_SELECT           = 0xB6;
-    static DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD         = 0x4E;
-    static DYNAMIC_SPAD_REF_EN_START_OFFSET            = 0x4F;
-    static POWER_MANAGEMENT_GO1_POWER_FORCE            = 0x80;
-
-    static VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV           = 0x89;
-
-    static ALGO_PHASECAL_LIM                           = 0x30;
-    static ALGO_PHASECAL_CONFIG_TIMEOUT                = 0x30;
-
-    static ADDRESS_DEFAULT = 0x29;
-    static ADDRESS = VL53L0X.ADDRESS_DEFAULT;
-
-    static VcselPeriodPreRange = 0;
-    static VcselPeriodFinalRange = 1;
-
     constructor(address = 0x2A, timeout = 0.5, bus = 'RPI_1') {
         super(bus, VL53L0X.ADDRESS);
 
@@ -190,7 +190,7 @@ class VL53L0X extends Sensor {
 
         //  VL53L0X_DataInit() end
 
-        //  VL53L0X_StaticInit() begin
+        //  VL53L0X_constInit() begin
 
         // spad_count, spad_type_is_aperture, success = this.getSpadInfo()
         const spadInfo = this.getSpadInfo();
@@ -354,7 +354,7 @@ class VL53L0X extends Sensor {
         //  "Recalculate timing budget"
         this.setMeasurementTimingBudget(VL53L0X.measurementTimingBudgetUs);
 
-        // VL53L0X_StaticInit() end
+        // VL53L0X_constInit() end
 
         // VL53L0X_PerformRefCalibration() begin (VL53L0X_perform_ref_calibration())
 
