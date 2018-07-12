@@ -80,8 +80,8 @@ class Car {
             i2c: this.i2c
         });
         this.distanceArray.on('data', (data) => {
-            this.status.frontDistance = data[0];
-            this.status.leftDistance = data[1];
+            this.status.frontDistance = data[1];
+            this.status.leftDistance = data[0];
             this.autoDrive(this.status);
         });
         this.distanceArray.startAcquisition(config.get('car.distance.period'));

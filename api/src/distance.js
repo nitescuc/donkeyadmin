@@ -25,7 +25,7 @@ const _i2c_send = (device, address, dataToWrite) => {
 
 const _readRegister = (device, address, bytesToRead) => {
     return new Promise((resolve, reject) => {
-        device.i2c.transfer(new Buffer([addressToRead]), bytesToRead, (err, data) => {
+        device.i2c.transfer(new Buffer([address]), bytesToRead, (err, data) => {
             if (err) reject(err);
             else resolve(data);
         });
@@ -67,11 +67,13 @@ class DistanceArray extends EventEmitter {
     }
     async readData() {
         // write start sequence
+        const res = [];
         for (let dev of this.devices) {
             await _i2c_send(dev.device, REGISTRY.SYSRANGE_START, 0x02);
+            res.push(await _readRange(dev.device));
         }
         //
-        this.emit('data', this.devices.map((dev) => _readRange(device)));
+        this.emit('data', res);
     }
     async startAcquisition(period) {
         this.interval = setInterval(() => this.readData(), period);
