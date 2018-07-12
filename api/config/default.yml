@@ -6,3 +6,15 @@ car:
   path: '/home/pi/d2'
   cwd: '/home/pi'
   pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
+  remote:
+    channels:
+      - 18
+      - 23
+      - 22
+  distance:
+    sensors:
+      - resetPin: 26
+        address: 0x2A
+      - resetPin: 19
+        address: 0x29
+    period: 50

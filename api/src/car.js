@@ -30,13 +30,7 @@ class Car {
         this.driveMode = "user";
         //
         this.remote = new RemoteController({
-            channels: [{
-                pin: 18
-            }, {
-                pin: 23
-            }, { 
-                pin: 22
-            }]
+            channels: config.get('car.remote.channels')
         });
         this.remote.addListener(0, (value) => {
             this.status.steering = value;
@@ -54,13 +48,7 @@ class Car {
         //
         this.actuator = new Actuator();
         this.distanceArray = new DistanceArray({
-            sensors: [{
-                resetPin: 26,
-                address: 0x2A
-            }, {
-                resetPin: 19,
-                address: 0x29
-            }]
+            sensors: config.get('car.distance.sensors')
         });
         //
         this.pyshell = new PythonShell('autopilot.py', {
@@ -95,7 +83,7 @@ class Car {
             this.status.leftDistance = data[1];
             this.autoDrive(this.status);
         });
-        this.distanceArray.startAcquisition(100);
+        this.distanceArray.startAcquisition(config.get('car.distance.period'));
     }
     autoDrive(status) {
         if (this.mode !== 'auto') return;

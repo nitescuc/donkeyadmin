@@ -42,13 +42,12 @@ class DistanceArray extends EventEmitter {
         }            
     }
     async readData() {
-        //
-        if (this.started) this.emmit('data', this.devices.map((dev) => dev.device.readRangeContinuousMillimeters(false)));
         // write start sequence
         for (let dev of this.devices) {
             dev.device.writeSingleCaptureStart();
         }
-        this.started = true;
+        //
+        this.emmit('data', this.devices.map((dev) => dev.device.readRangeContinuousMillimeters(false)));
     }
     async startAcquisition(period) {
         this.interval = setInterval(() => this.readData, period);

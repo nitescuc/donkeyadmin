@@ -391,11 +391,11 @@ class VL53LOX extends EventEmitter {
 	singleCapture(){
 		this._writeRegisters(REGISTRY.SYSRANGE_START, 0x02);
 
-    this._readRegisters(REGISTRY.RESULT_RANGE_STATUS, 16, (err, data) => {
-		if (err) console.log('ERROR', err);
-      var _dis = (data.readInt16BE(8) + 10);
-      this.emit('distance', _dis);
-    });
+		this._readRegisters(REGISTRY.RESULT_RANGE_STATUS, 16, (err, data) => {
+			if (err) console.log('ERROR', err);
+			var _dis = (data.readInt16BE(8) + 10);
+			this.emit('distance', _dis);
+		});
 	}
 
 	/*
