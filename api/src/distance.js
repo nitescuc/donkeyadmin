@@ -15,6 +15,7 @@ const _setTimeout = (duration) => {
 
 class DistanceArray extends EventEmitter {
     constructor(config) {
+        super();
         this.sensors = config.sensors;
     }
     async initialize(options) {
