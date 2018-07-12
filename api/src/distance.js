@@ -63,6 +63,9 @@ class DistanceArray extends EventEmitter {
             await _setTimeout(100);
             // change address
             await dev.device.setAddress(dev.address);
+            //
+            dev.device.init();
+            await _setTimeout(100);
         }            
     }
     async readData() {

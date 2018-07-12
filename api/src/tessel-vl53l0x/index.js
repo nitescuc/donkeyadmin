@@ -125,33 +125,33 @@ class VL53LOX extends EventEmitter {
 	}
 
 	init() {
-        this.i2c.writeReg8(VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV, (this.i2c.readReg8u(VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV) | 0x01)); //  set bit 0
+        this._writeRegisters(REGISTRY.VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV, (this._readRegisters(REGISTRY.VHV_CONFIG_PAD_SCL_SDA__EXTSUP_HV) | 0x01)); //  set bit 0
 		
 		//  "Set I2C standard mode"
-		this.i2c.writeReg8(0x88, 0x00);
+		this._writeRegisters(0x88, 0x00);
 
-		this.i2c.writeReg8(0x80, 0x01);
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(0x00, 0x00);
-		this.stopVariable = this.i2c.readReg8u(0x91);
-		this.i2c.writeReg8(0x00, 0x01);
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(0x80, 0x00);
+		this._writeRegisters(0x80, 0x01);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(0x00, 0x00);
+		this.stopVariable = this._readRegisters(0x91);
+		this._writeRegisters(0x00, 0x01);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(0x80, 0x00);
 
 		//  disable SIGNAL_RATE_MSRC (bit 1) and SIGNAL_RATE_PRE_RANGE (bit 4) limit checks
-		this.i2c.writeReg8(MSRC_CONFIG_CONTROL, (this.i2c.readReg8u(MSRC_CONFIG_CONTROL) | 0x12));
+		this._writeRegisters(REGISTRY.MSRC_CONFIG_CONTROL, (this._readRegisters(REGISTRY.MSRC_CONFIG_CONTROL) | 0x12));
 
 		//  set final range signal rate limit to 0.25 MCPS (million counts per second)
 		this.setSignalRateLimit(0.25);
 
-		this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0xFF);
+		this._writeRegisters(REGISTRY.SYSTEM_SEQUENCE_CONFIG, 0xFF);
 
 		//  VL53L0X_DataInit() end
 
 		//  VL53L0X_constInit() begin
 
 		// spad_count, spad_type_is_aperture, success = this.getSpadInfo()
-		const spadInfo = this.getSpadInfo();
+/*		const spadInfo = this.getSpadInfo();
 		if (!spadInfo[2]) {
 			return false;
 		}
@@ -159,15 +159,15 @@ class VL53LOX extends EventEmitter {
 		//  The SPAD map (RefGoodSpadMap) is read by VL53L0X_get_info_from_device() in
 		//  the API, but the same data seems to be more easily readable from
 		//  GLOBAL_CONFIG_SPAD_ENABLES_REF_0 through _6, so read it from there
-		const refSpadMap = this.i2c.readRegList(GLOBAL_CONFIG_SPAD_ENABLES_REF_0, 6);
+		const refSpadMap = this.i2c.readRegList(REGISTRY.GLOBAL_CONFIG_SPAD_ENABLES_REF_0, 6);
 
 		//  -- VL53L0X_set_reference_spads() begin (assume NVM values are valid)
 
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(DYNAMIC_SPAD_REF_EN_START_OFFSET, 0x00);
-		this.i2c.writeReg8(DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD, 0x2C);
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(GLOBAL_CONFIG_REF_EN_START_SELECT, 0xB4);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(REGISTRY.DYNAMIC_SPAD_REF_EN_START_OFFSET, 0x00);
+		this._writeRegisters(REGISTRY.DYNAMIC_SPAD_NUM_REQUESTED_REF_SPAD, 0x2C);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(REGISTRY.GLOBAL_CONFIG_REF_EN_START_SELECT, 0xB4);
 
 		let firstSpadToEnable;
 		if (spadInfo[1]) {
@@ -186,126 +186,126 @@ class VL53LOX extends EventEmitter {
 			}
 		}
 
-		this.i2c.writeRegList(GLOBAL_CONFIG_SPAD_ENABLES_REF_0, refSpadMap);
-
+		this.i2c.writeRegList(REGISTRY.GLOBAL_CONFIG_SPAD_ENABLES_REF_0, refSpadMap);
+*/
 		//  -- VL53L0X_set_reference_spads() end
 
 		//  -- VL53L0X_load_tuning_settings() begin
 		//  DefaultTuningSettings from vl53l0x_tuning.h
 
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(0x00, 0x00);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(0x00, 0x00);
 
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(0x09, 0x00);
-		this.i2c.writeReg8(0x10, 0x00);
-		this.i2c.writeReg8(0x11, 0x00);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(0x09, 0x00);
+		this._writeRegisters(0x10, 0x00);
+		this._writeRegisters(0x11, 0x00);
 
-		this.i2c.writeReg8(0x24, 0x01);
-		this.i2c.writeReg8(0x25, 0xFF);
-		this.i2c.writeReg8(0x75, 0x00);
+		this._writeRegisters(0x24, 0x01);
+		this._writeRegisters(0x25, 0xFF);
+		this._writeRegisters(0x75, 0x00);
 
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(0x4E, 0x2C);
-		this.i2c.writeReg8(0x48, 0x00);
-		this.i2c.writeReg8(0x30, 0x20);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(0x4E, 0x2C);
+		this._writeRegisters(0x48, 0x00);
+		this._writeRegisters(0x30, 0x20);
 
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(0x30, 0x09);
-		this.i2c.writeReg8(0x54, 0x00);
-		this.i2c.writeReg8(0x31, 0x04);
-		this.i2c.writeReg8(0x32, 0x03);
-		this.i2c.writeReg8(0x40, 0x83);
-		this.i2c.writeReg8(0x46, 0x25);
-		this.i2c.writeReg8(0x60, 0x00);
-		this.i2c.writeReg8(0x27, 0x00);
-		this.i2c.writeReg8(0x50, 0x06);
-		this.i2c.writeReg8(0x51, 0x00);
-		this.i2c.writeReg8(0x52, 0x96);
-		this.i2c.writeReg8(0x56, 0x08);
-		this.i2c.writeReg8(0x57, 0x30);
-		this.i2c.writeReg8(0x61, 0x00);
-		this.i2c.writeReg8(0x62, 0x00);
-		this.i2c.writeReg8(0x64, 0x00);
-		this.i2c.writeReg8(0x65, 0x00);
-		this.i2c.writeReg8(0x66, 0xA0);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(0x30, 0x09);
+		this._writeRegisters(0x54, 0x00);
+		this._writeRegisters(0x31, 0x04);
+		this._writeRegisters(0x32, 0x03);
+		this._writeRegisters(0x40, 0x83);
+		this._writeRegisters(0x46, 0x25);
+		this._writeRegisters(0x60, 0x00);
+		this._writeRegisters(0x27, 0x00);
+		this._writeRegisters(0x50, 0x06);
+		this._writeRegisters(0x51, 0x00);
+		this._writeRegisters(0x52, 0x96);
+		this._writeRegisters(0x56, 0x08);
+		this._writeRegisters(0x57, 0x30);
+		this._writeRegisters(0x61, 0x00);
+		this._writeRegisters(0x62, 0x00);
+		this._writeRegisters(0x64, 0x00);
+		this._writeRegisters(0x65, 0x00);
+		this._writeRegisters(0x66, 0xA0);
 
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(0x22, 0x32);
-		this.i2c.writeReg8(0x47, 0x14);
-		this.i2c.writeReg8(0x49, 0xFF);
-		this.i2c.writeReg8(0x4A, 0x00);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(0x22, 0x32);
+		this._writeRegisters(0x47, 0x14);
+		this._writeRegisters(0x49, 0xFF);
+		this._writeRegisters(0x4A, 0x00);
 
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(0x7A, 0x0A);
-		this.i2c.writeReg8(0x7B, 0x00);
-		this.i2c.writeReg8(0x78, 0x21);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(0x7A, 0x0A);
+		this._writeRegisters(0x7B, 0x00);
+		this._writeRegisters(0x78, 0x21);
 
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(0x23, 0x34);
-		this.i2c.writeReg8(0x42, 0x00);
-		this.i2c.writeReg8(0x44, 0xFF);
-		this.i2c.writeReg8(0x45, 0x26);
-		this.i2c.writeReg8(0x46, 0x05);
-		this.i2c.writeReg8(0x40, 0x40);
-		this.i2c.writeReg8(0x0E, 0x06);
-		this.i2c.writeReg8(0x20, 0x1A);
-		this.i2c.writeReg8(0x43, 0x40);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(0x23, 0x34);
+		this._writeRegisters(0x42, 0x00);
+		this._writeRegisters(0x44, 0xFF);
+		this._writeRegisters(0x45, 0x26);
+		this._writeRegisters(0x46, 0x05);
+		this._writeRegisters(0x40, 0x40);
+		this._writeRegisters(0x0E, 0x06);
+		this._writeRegisters(0x20, 0x1A);
+		this._writeRegisters(0x43, 0x40);
 
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(0x34, 0x03);
-		this.i2c.writeReg8(0x35, 0x44);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(0x34, 0x03);
+		this._writeRegisters(0x35, 0x44);
 
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(0x31, 0x04);
-		this.i2c.writeReg8(0x4B, 0x09);
-		this.i2c.writeReg8(0x4C, 0x05);
-		this.i2c.writeReg8(0x4D, 0x04);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(0x31, 0x04);
+		this._writeRegisters(0x4B, 0x09);
+		this._writeRegisters(0x4C, 0x05);
+		this._writeRegisters(0x4D, 0x04);
 
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(0x44, 0x00);
-		this.i2c.writeReg8(0x45, 0x20);
-		this.i2c.writeReg8(0x47, 0x08);
-		this.i2c.writeReg8(0x48, 0x28);
-		this.i2c.writeReg8(0x67, 0x00);
-		this.i2c.writeReg8(0x70, 0x04);
-		this.i2c.writeReg8(0x71, 0x01);
-		this.i2c.writeReg8(0x72, 0xFE);
-		this.i2c.writeReg8(0x76, 0x00);
-		this.i2c.writeReg8(0x77, 0x00);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(0x44, 0x00);
+		this._writeRegisters(0x45, 0x20);
+		this._writeRegisters(0x47, 0x08);
+		this._writeRegisters(0x48, 0x28);
+		this._writeRegisters(0x67, 0x00);
+		this._writeRegisters(0x70, 0x04);
+		this._writeRegisters(0x71, 0x01);
+		this._writeRegisters(0x72, 0xFE);
+		this._writeRegisters(0x76, 0x00);
+		this._writeRegisters(0x77, 0x00);
 
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(0x0D, 0x01);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(0x0D, 0x01);
 
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(0x80, 0x01);
-		this.i2c.writeReg8(0x01, 0xF8);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(0x80, 0x01);
+		this._writeRegisters(0x01, 0xF8);
 
-		this.i2c.writeReg8(0xFF, 0x01);
-		this.i2c.writeReg8(0x8E, 0x01);
-		this.i2c.writeReg8(0x00, 0x01);
-		this.i2c.writeReg8(0xFF, 0x00);
-		this.i2c.writeReg8(0x80, 0x00);
+		this._writeRegisters(0xFF, 0x01);
+		this._writeRegisters(0x8E, 0x01);
+		this._writeRegisters(0x00, 0x01);
+		this._writeRegisters(0xFF, 0x00);
+		this._writeRegisters(0x80, 0x00);
 
 		//  -- VL53L0X_load_tuning_settings() end
 
 		//  "Set interrupt config to new sample ready"
 		//  -- VL53L0X_SetGpioConfig() begin
 
-		this.i2c.writeReg8(SYSTEM_INTERRUPT_CONFIG_GPIO, 0x04);
-		this.i2c.writeReg8(GPIO_HV_MUX_ACTIVE_HIGH, this.i2c.readReg8u(GPIO_HV_MUX_ACTIVE_HIGH) & ~0x10); //  active low
-		this.i2c.writeReg8(SYSTEM_INTERRUPT_CLEAR, 0x01);
+		this._writeRegisters(REGISTRY.SYSTEM_INTERRUPT_CONFIG_GPIO, 0x04);
+		this._writeRegisters(REGISTRY.GPIO_HV_MUX_ACTIVE_HIGH, this._readRegisters(REGISTRY.GPIO_HV_MUX_ACTIVE_HIGH) & ~0x10); //  active low
+		this._writeRegisters(REGISTRY.SYSTEM_INTERRUPT_CLEAR, 0x01);
 
 		//  -- VL53L0X_SetGpioConfig() end
 
-		this.measurementTimingBudgetUs = this.get_measurementTimingBudget();
+/*		this.measurementTimingBudgetUs = this.get_measurementTimingBudget();
 
 		//  "Disable MSRC and TCC by default"
 		//  MSRC = Minimum Signal Rate Check
 		//  TCC = Target CentreCheck
 		//  -- VL53L0X_SetSequenceStepEnable() begin
 
-		this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0xE8);
+		this._writeRegisters(REGISTRY.SYSTEM_SEQUENCE_CONFIG, 0xE8);
 
 		//  -- VL53L0X_SetSequenceStepEnable() end
 
@@ -315,10 +315,10 @@ class VL53LOX extends EventEmitter {
 		// VL53L0X_constInit() end
 
 		// VL53L0X_PerformRefCalibration() begin (VL53L0X_perform_ref_calibration())
-
+*/
 		// -- VL53L0X_perform_vhv_calibration() begin
 
-		this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0x01);
+		this._writeRegisters(REGISTRY.SYSTEM_SEQUENCE_CONFIG, 0x01);
 		if (!this.performSingleRefCalibration(0x40)) {
 			return false;
 		}
@@ -327,7 +327,7 @@ class VL53LOX extends EventEmitter {
 
 		// -- VL53L0X_perform_phase_calibration() begin
 
-		this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0x02);
+		this._writeRegisters(REGISTRY.SYSTEM_SEQUENCE_CONFIG, 0x02);
 		if (!this.performSingleRefCalibration(0x00)) {
 			return false;
 		}
@@ -335,7 +335,7 @@ class VL53LOX extends EventEmitter {
 		// -- VL53L0X_perform_phase_calibration() end
 
 		// "restore the previous Sequence Config"
-		this.i2c.writeReg8(SYSTEM_SEQUENCE_CONFIG, 0xE8);
+		this._writeRegisters(REGISTRY.SYSTEM_SEQUENCE_CONFIG, 0xE8);
 
 		// VL53L0X_PerformRefCalibration() end
 
@@ -894,7 +894,42 @@ class VL53LOX extends EventEmitter {
 	| getSpadInfo:bool (-)
 	------------------------------------------ */
 	getSpadInfo( count, type_is_aperture ){
+        this_writeRegisters(0x80, 0x01);
+        this_writeRegisters(0xFF, 0x01);
+        this_writeRegisters(0x00, 0x00);
 
+        this_writeRegisters(0xFF, 0x06);
+        this_writeRegisters(0x83, this._readRegisters(0x83) | 0x04);
+        this_writeRegisters(0xFF, 0x07);
+        this_writeRegisters(0x81, 0x01);
+
+        this_writeRegisters(0x80, 0x01);
+
+        this_writeRegisters(0x94, 0x6b);
+        this_writeRegisters(0x83, 0x00);
+        this.start_timeout();
+        while (this._readRegisters(0x83) === 0x00) {
+            if (this._checkTimeoutExpired()) {
+                return [0, 0, false];
+            }
+        }
+
+        this_writeRegisters(0x83, 0x01);
+        const tmp = this._readRegisters(0x92);
+
+        const count = tmp & 0x7f;
+        const typeIsAperture = (tmp >> 7) & 0x01;
+
+        this_writeRegisters(0x81, 0x00);
+        this_writeRegisters(0xFF, 0x06);
+        this_writeRegisters(0x83, this._readRegisters(0x83  & ~0x04));
+        this_writeRegisters(0xFF, 0x01);
+        this_writeRegisters(0x00, 0x01);
+
+        this_writeRegisters(0xFF, 0x00);
+        this_writeRegisters(0x80, 0x00);
+
+        return [count, typeIsAperture, true];
 	}
 
 	/*
