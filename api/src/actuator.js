@@ -22,10 +22,12 @@ class Actuator {
         });
     }
     setSteering(value) {
+        if (!this.pwm) return;
         this.pwm.setPulseLength(this.steeringChannel, value);
     }
     setThrottle(value) {
 //        if (value !== 1500 && value < 1550 && value > 1450) return;
+        if (!this.pwm) return;
         this.pwm.setPulseLength(this.throttleChannel, value);
     }
 }
