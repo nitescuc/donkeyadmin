@@ -75,6 +75,7 @@ class Car {
         await this.actuator.initialize({
             i2c: this.i2c
         });
+        this.actuator.setThrottle(1500);
         await this.distanceArray.initialize({
             i2c: this.i2c
         });
