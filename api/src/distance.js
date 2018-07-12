@@ -70,6 +70,7 @@ class DistanceArray extends EventEmitter {
         const res = [];
         for (let dev of this.devices) {
             await _i2c_send(dev.device, REGISTRY.SYSRANGE_START, 0x02);
+            await _setTimeout(20);
             res.push(await _readRange(dev.device));
         }
         //
