@@ -25,7 +25,7 @@ class Actuator {
         this.pwm.setPulseLength(this.steeringChannel, value);
     }
     setThrottle(value) {
-        if (value !== 1500 && value < 1550 && value > 1450) return;
+//        if (value !== 1500 && value < 1550 && value > 1450) return;
         this.pwm.setPulseLength(this.throttleChannel, value);
     }
 }
