@@ -3,7 +3,10 @@
 const PCA9685 = require('pca9685').Pca9685Driver;
 
 class Actuator {
-    constructor() {}
+    constructor(config) {
+        this.steeringChannel = config.steeringChannel;
+        this.throttleChannel = config.throttleChannel;
+    }
 
     async initialize(options) {
         return new Promise((resolve, reject) => {
@@ -19,10 +22,10 @@ class Actuator {
         });
     }
     setSteering(value) {
-        this.pwm.setPulseLength(0, value);
+        this.pwm.setPulseLength(this.steeringChannel, value);
     }
     setThrottle(value) {
-        this.pwm.setPulseLength(1, value);
+        this.pwm.setPulseLength(this.throttleChannel, value);
     }
 }
 

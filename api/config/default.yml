@@ -18,3 +18,6 @@ car:
       - resetPin: 19
         address: 0x29
     period: 50
+  actuator:
+    steeringChannel: 13
+    throttleChannel: 0

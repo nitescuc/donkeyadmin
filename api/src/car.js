@@ -46,7 +46,7 @@ class Car {
             else this.driveMode = "user";
         });
         //
-        this.actuator = new Actuator();
+        this.actuator = new Actuator(config.get('car.actuator'));
         this.distanceArray = new DistanceArray({
             sensors: config.get('car.distance.sensors')
         });
