@@ -68,7 +68,7 @@ class Car {
                
         setInterval(() => {
             console.log(JSON.stringify(this.status))
-            this.io && this.io.emit('status', status);
+            this.io && this.io.emit('status', this.status);
         }, 1000);
     }
     async initialize() {
