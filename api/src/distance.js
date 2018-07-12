@@ -19,14 +19,13 @@ class DistanceArray extends EventEmitter {
         this.sensors = config.sensors;
     }
     async initialize(options) {
-        this.i2c = new I2C(0x29, options.i2c);
         this.devices = [];
         for (let sensor of this.sensors) {
             const dd = {
                 resetGpio: new Gpio(sensor.resetPin, { mode: Gpio.OUTPUT }),
                 address: sensor.address,
                 device: new VL53LOX({
-                    i2c: this.i2c
+                    i2c: new I2C(0x29, options.i2c)
                 })
             }
             this.devices.push(dd);
