@@ -19,6 +19,11 @@ class MessageBox extends Component {
                 message: `${new Date().toISOString()} - DRIVE - ${message.type} - ${message.message}`
             });
         });
+        this.socket.on('status', (message) => {
+            this.setState({
+                status: message
+            });
+        });
     }
     componentWillUnmount() {
         if (this.socket) this.socket.close();
@@ -54,6 +59,12 @@ class MessageBox extends Component {
                             return <div style={{ color }}>{message.message}</div>
                         } else return <div>{message}</div>
                     })}
+                </div>
+                <div class="row">
+                <span class="col-md-6" style={{'text-align':'left'}}>Left distance</span><span class="col-md-6" style={{'text-align':'right'}}>{(this.state.status || {}).leftDistance}</span>
+                <span class="col-md-6" style={{'text-align':'left'}}>Front distance</span><span class="col-md-6" style={{'text-align':'right'}}>{(this.state.status || {}).frontDistance}</span>
+                <span class="col-md-6" style={{'text-align':'left'}}>Steering</span><span class="col-md-6" style={{'text-align':'right'}}>{(this.state.status || {}).steering}</span>
+                <span class="col-md-6" style={{'text-align':'left'}}>Throttle</span><span class="col-md-6" style={{'text-align':'right'}}>{(this.state.status || {}).throttle}</span>
                 </div>
             </div>
         )
