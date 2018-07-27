@@ -5,19 +5,22 @@ models:
 car:
   path: '/home/pi/d2'
   cwd: '/home/pi'
-  pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
   remote:
     channels:
-      - 18
-      - 23
-      - 22
-  distance:
-    sensors:
-      - resetPin: 26
-        address: 0x2A
-      - resetPin: 19
-        address: 0x29
-    period: 50
+      steering: 18
+      throttle: 23
+      mode: 22
   actuator:
-    steeringChannel: 13
+    steeringChannel: 1
     throttleChannel: 0
+    throttleMax: 425
+    throttleMin: 300
+  autopilot:
+    pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
+    scripts_path: 'python'
+    pilot: 
+      script: 'autopilot.py'
+      interval: 50
+    recorder:
+      script: 'recorder.py'
+      interval: 50

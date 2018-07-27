@@ -6,6 +6,8 @@ class Actuator {
     constructor(config) {
         this.steeringChannel = config.steeringChannel;
         this.throttleChannel = config.throttleChannel;
+        this.throttleMax = config.throttleMax;
+        this.throttleMin = config.throttleMin;
     }
 
     async initialize(options) {
@@ -21,13 +23,35 @@ class Actuator {
             });
         });
     }
+    normalizeSteering(value) {
+        return (value - 1500)/500;
+    }
     setSteering(value) {
         if (!this.pwm) return;
+        if (Math.abs(value) <= 1) value = 1500 + value * 500;
+        this.steering = value;
+        this.normalizedSteering = this.normalizeSteering(value);
         this.pwm.setPulseLength(this.steeringChannel, value);
     }
+    normalizeThrottle(value) {
+        const dir = value - 1500;
+        if (dir >= 0) return dir * this.throttleMax / 500;
+        else return dir * this.throttleMin / 500;
+    }
+    denormalizeThrottle(value) {
+        if (value >= 0) return 1500 + value * this.throttleMax;
+        else return 1500 + value * this.throttleMin;
+    }
     setThrottle(value) {
-//        if (value !== 1500 && value < 1550 && value > 1450) return;
         if (!this.pwm) return;
+        //
+        //
+        if (Math.abs(value) <= 1) value = this.denormalizeThrottle(value);
+        else value = this.denormalizeThrottle(this.normalizeThrottle(value));
+        //
+        this.normalizedThrottle = this.normalizeThrottle(value);
+        this.throttle = value;
+        //
         this.pwm.setPulseLength(this.throttleChannel, value);
     }
 }
