@@ -47,7 +47,7 @@ class Car {
         this.actuator = new Actuator(config.get('car.actuator'));
         //
         this.recorder_pyshell = new PythonShell(config.get('car.autopilot.recorder.script'), {
-            pythonPath: config.get('car.pythonPath'),
+            pythonPath: config.get('car.autopilot.pythonPath'),
             scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             mode: 'json',
@@ -56,7 +56,7 @@ class Car {
         this.recorder_pyshell.on('message', (message) => {});
         //
         this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.pilot.script'), {
-            pythonPath: config.get('car.pythonPath'),
+            pythonPath: config.get('car.autopilot.pythonPath'),
             scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             mode: 'json',
@@ -83,7 +83,7 @@ class Car {
         }, 1000);
         this.recordInterval = setInterval(() => {
             this.recorder_pyshell.send(this.status);
-        }, config.get('autopilot.recorder.interval'));
+        }, config.get('car.autopilot.recorder.interval'));
 //        this.autopilotInterval = setInterval(() => {
 //            this.record(this.status);
 //        }, config.get('autopilot.pilot.interval'));

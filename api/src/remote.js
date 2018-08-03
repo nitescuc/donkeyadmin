@@ -5,9 +5,9 @@ const EventEmitter = require("events").EventEmitter;
 
 class RemoteController extends EventEmitter {
     analogHandler(lv, tick) {}
-    addChannel(eventName, pin, handler) {
+    addChannel(eventName, pin) {
         const level = 1;
-        this.channels[eventName] = {
+        const channel = this.channels[eventName] = {
             startTick: 0,
             level,
             gpio: new Gpio(pin, {
@@ -16,42 +16,28 @@ class RemoteController extends EventEmitter {
                 alert: true
             })
         }
-        this.channels[eventName].gpio.on('alert', handler);
+        channel.gpio.on('alert', (lv, tick) => {
+            let endTick, diff;
+            if (lv === 1) {
+                channel.startTick = tick;
+            } else {
+                endTick = tick;
+                diff = (endTick >> 0) - (channel.startTick >> 0);
+                //
+                ctrl.emmit(eventName, diff);
+            }
+        });
     }
     constructor(config) {
         super();
         const ctrl = this;
         //
-        const channelHandler = (lv, tick) => {
-            let endTick, diff;
-            if (lv === level) {
-                result.startTick = tick;
-            } else {
-                endTick = tick;
-                diff = (endTick >> 0) - (result.startTick >> 0);
-                //
-                ctrl.emmit(eventName, diff);
-            }
-        }
-        //
-        const modeHandler = (lv, tick) => {
-            let endTick, diff;
-            if (lv === level) {
-                result.startTick = tick;
-            } else {
-                endTick = tick;
-                diff = (endTick >> 0) - (result.startTick >> 0);
-                //
-                ctrl.emmit(eventName, diff);
-            }
-        }
-        //
         this.config = config;
         this.channels = {};
         //
-        this.addChannel('steering', config.channels.steering, channelHandler);
-        this.addChannel('throttle', config.channels.throttle, channelHandler);
-        this.addChannel('mode', config.channels.mode, channelHandler);
+        this.addChannel('steering', config.channels.steering);
+        this.addChannel('throttle', config.channels.throttle);
+        this.addChannel('mode', config.channels.mode);
     }
 }
 
