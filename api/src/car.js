@@ -46,7 +46,7 @@ class Car {
         //
         this.actuator = new Actuator(config.get('car.actuator'));
         //
-/*        this.recorder_pyshell = new PythonShell(config.get('car.autopilot.recorder.script'), {
+        this.recorder_pyshell = new PythonShell(config.get('car.autopilot.recorder.script'), {
             pythonPath: config.get('car.autopilot.pythonPath'),
             scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
@@ -55,7 +55,7 @@ class Car {
         });
         this.recorder_pyshell.on('message', (message) => {});
         //
-        this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.pilot.script'), {
+/*        this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.pilot.script'), {
             pythonPath: config.get('car.autopilot.pythonPath'),
             scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
@@ -82,11 +82,11 @@ class Car {
             this.io && this.io.emit('status', this.status);
         }, 1000);
         this.recordInterval = setInterval(() => {
-//            this.recorder_pyshell.send(this.status);
+            this.recorder_pyshell.send(this.status);
         }, config.get('car.autopilot.recorder.interval'));
-//        this.autopilotInterval = setInterval(() => {
-//            this.record(this.status);
-//        }, config.get('autopilot.pilot.interval'));
+/*        this.autopilotInterval = setInterval(() => {
+            this.record(this.status);
+        }, config.get('car.autopilot.pilot.interval'));*/
     }
     async initialize() {
         this.i2c = await _getI2C();

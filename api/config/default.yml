@@ -13,7 +13,7 @@ car:
   actuator:
     steeringChannel: 1
     throttleChannel: 0
-    throttleMax: 400
+    throttleMax: 380
     remoteThrottleMax: 475
     throttleMin: 300
     remoteThrottleMin: 490
