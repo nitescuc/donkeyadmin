@@ -30,11 +30,11 @@ class Car {
             channels: config.get('car.remote.channels')
         });
         this.remote.on('steering', (value) => {
-            if (this.driveMode === 'user')
+            if (this.status.driveMode === 'user')
                 this.setSteering(value);
         });
         this.remote.on('throttle', (value) => {
-            if (this.driveMode === 'user')
+            if (this.status.driveMode === 'user')
                 this.setThrottle(value);
         });
         this.remote.on('mode', (value) => {
@@ -82,7 +82,7 @@ class Car {
             this.io && this.io.emit('status', this.status);
         }, 1000);
         this.recordInterval = setInterval(() => {
-            this.recorder_pyshell.send(this.status);
+//            this.recorder_pyshell.send(this.status);
         }, config.get('car.autopilot.recorder.interval'));
 //        this.autopilotInterval = setInterval(() => {
 //            this.record(this.status);

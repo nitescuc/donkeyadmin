@@ -35,8 +35,8 @@ class Actuator {
     }
     normalizeThrottle(value) {
         const dir = value - 1500;
-        if (dir >= 0) return dir * this.throttleMax / 500;
-        else return dir * this.throttleMin / 500;
+        if (dir >= 0) return (dir / 500) * (this.throttleMax / 500);
+        else return (dir / 500) * (this.throttleMin / 500);
     }
     denormalizeThrottle(value) {
         if (value >= 0) return 1500 + value * this.throttleMax;
