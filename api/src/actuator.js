@@ -8,6 +8,8 @@ class Actuator {
         this.throttleChannel = config.throttleChannel;
         this.throttleMax = config.throttleMax;
         this.throttleMin = config.throttleMin;
+        this.remoteThrottleMax = config.remoteThrottleMax;
+        this.remoteThrottleMin = config.remoteThrottleMin;
     }
 
     async initialize(options) {
@@ -35,8 +37,8 @@ class Actuator {
     }
     normalizeThrottle(value) {
         const dir = value - 1500;
-        if (dir >= 0) return (dir / 500) * (this.throttleMax / 500);
-        else return (dir / 500) * (this.throttleMin / 500);
+        if (dir >= 0) return (dir / this.remoteThrottleMax) * (this.throttleMax / this.remoteThrottleMax);
+        else return (dir / this.remoteThrottleMin) * (this.throttleMin / this.remoteThrottleMin);
     }
     denormalizeThrottle(value) {
         if (value >= 0) return 1500 + value * this.throttleMax;

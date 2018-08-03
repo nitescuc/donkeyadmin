@@ -14,7 +14,9 @@ car:
     steeringChannel: 1
     throttleChannel: 0
     throttleMax: 425
+    remoteThrottleMax: 475
     throttleMin: 300
+    remoteThrottleMin: 490
   autopilot:
     pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
     scripts_path: 'python'
