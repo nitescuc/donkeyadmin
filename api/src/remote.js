@@ -19,6 +19,7 @@ class RemoteController extends EventEmitter {
         this.channels[eventName].gpio.on('alert', handler);
     }
     constructor(config) {
+        super();
         const ctrl = this;
         //
         const channelHandler = (lv, tick) => {

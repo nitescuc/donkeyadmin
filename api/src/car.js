@@ -46,19 +46,19 @@ class Car {
         //
         this.actuator = new Actuator(config.get('car.actuator'));
         //
-        this.recorder_pyshell = new PythonShell(config.get('autopilot.recorder.script'), {
+        this.recorder_pyshell = new PythonShell(config.get('car.autopilot.recorder.script'), {
             pythonPath: config.get('car.pythonPath'),
-            scriptPath: path.join(__dirname, '../..', config.get('autopilot.scripts_path')),
-            cwd: path.join(__dirname, '../..', config.get('autopilot.scripts_path')),
+            scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
+            cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             mode: 'json',
             pythonOptions: ['-u']
         });
         this.recorder_pyshell.on('message', (message) => {});
         //
-        this.autopilot_pyshell = new PythonShell(config.get('autopilot.pilot.script'), {
+        this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.pilot.script'), {
             pythonPath: config.get('car.pythonPath'),
-            scriptPath: path.join(__dirname, '../..', config.get('autopilot.scripts_path')),
-            cwd: path.join(__dirname, '../..', config.get('autopilot.scripts_path')),
+            scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
+            cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             mode: 'json',
             pythonOptions: ['-u']
         });
