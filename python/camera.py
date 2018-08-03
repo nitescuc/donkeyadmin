@@ -27,7 +27,7 @@ class PiCamera():
         self.frame = None
         self.on = True
 
-        print('PiCamera loaded.. .warming camera')
+#        print('PiCamera loaded.. .warming camera')
         time.sleep(2)
 
     def preprocess(self, array):
@@ -45,7 +45,7 @@ class PiCamera():
     def shutdown(self):
         # indicate that the thread should be stopped
         self.on = False
-        print('stoping PiCamera')
+#        print('stoping PiCamera')
         time.sleep(.5)
         self.stream.close()
         self.rawCapture.close()
