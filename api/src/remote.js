@@ -6,6 +6,7 @@ const EventEmitter = require("events").EventEmitter;
 class RemoteController extends EventEmitter {
     analogHandler(lv, tick) {}
     addChannel(eventName, pin) {
+        const ctrl = this;
         const level = 1;
         const channel = this.channels[eventName] = {
             startTick: 0,
@@ -24,7 +25,7 @@ class RemoteController extends EventEmitter {
                 endTick = tick;
                 diff = (endTick >> 0) - (channel.startTick >> 0);
                 //
-                ctrl.emmit(eventName, diff);
+                ctrl.emit(eventName, diff);
             }
         });
     }

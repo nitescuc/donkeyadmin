@@ -94,15 +94,6 @@ class Car {
             i2c: this.i2c
         });
         this.actuator.setThrottle(1500);
-        await this.distanceArray.initialize({
-            i2c: this.i2c
-        });
-        this.distanceArray.on('data', (data) => {
-            this.status.frontDistance = data[1];
-            this.status.leftDistance = data[0];
-            this.autoDrive(this.status);
-        });
-        this.distanceArray.startAcquisition(config.get('car.distance.period'));
     }
     setSteering(value) {
         this.actuator.setSteering(value);
