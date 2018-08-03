@@ -47,11 +47,16 @@ class Actuator {
     setThrottle(value) {
         if (!this.pwm) return;
         //
+        let normalized = 0;
+        if (Math.abs(value) <= 1)  {
+            normalized = value;
+            value = this.denormalizeThrottle(value);
+        } else {
+            normalized = this.normalizeThrottle(value);
+            value = this.denormalizeThrottle(normalized);
+        }
         //
-        if (Math.abs(value) <= 1) value = this.denormalizeThrottle(value);
-        else value = this.denormalizeThrottle(this.normalizeThrottle(value));
-        //
-        this.normalizedThrottle = this.normalizeThrottle(value);
+        this.normalizedThrottle = normalized;
         this.throttle = value;
         //
         this.pwm.setPulseLength(this.throttleChannel, value);
