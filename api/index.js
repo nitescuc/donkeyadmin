@@ -11,9 +11,7 @@ const Drive = require('./src/drive');
 
 const Car = require('./src/car');
 
-drive.setup({
-    io
-});
+const drive = new Drive();
 
 io.on('connection', function(socket){
     console.log('a user connected');
@@ -26,12 +24,17 @@ app.use(express.static(path.join(__dirname, '../app/build'), {
 }));
 app.use('/tubes', tubes);
 app.use('/models', models);
+app.use('/drive', drive.router);
 
 const car = new Car({
     io
 });
 car.initialize();
 
-app.use('/drive', new Drive(car).router);
+
+drive.setup({
+    io,
+    car
+});
 
 http.listen(8080);
