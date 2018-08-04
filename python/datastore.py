@@ -10,9 +10,8 @@ import pandas as pd
 from PIL import Image
 
 class Datastore():
-    def __init__(self, base_path):
+    def __init__(self):
         self.current_ix = 0
-        self.path = base_path
 
     def make_file_name(self, key, ext='.png'):
         name = '{:08d}_{}_{}'.format(self.current_ix, key, ext)        
@@ -37,7 +36,12 @@ class Datastore():
             print("Unexpected error:", sys.exc_info()[0])
             raise
 
+    def set_path(self, base_path):
+        self.path = path
+
     def save(self, image_array, json_data):
+        if self.path == '':
+            raise 'No path'
         key = 'cam/image_array'
         name = self.make_file_name(key, ext='.jpg')
         img = Image.fromarray(np.uint8(image_array))        

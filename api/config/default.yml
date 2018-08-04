@@ -26,3 +26,7 @@ car:
     recorder:
       script: 'recorder.py'
       interval: 50
+  statusLed:
+    red: 21
+    green: 20
+    blue: 19

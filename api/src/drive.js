@@ -3,92 +3,51 @@ const PythonShell = require('python-shell');
 const path = require('path');
 const config = require('config');
 
-const router = express.Router();
-
-let pyshell = null;
 let options = {};
-let status = {
-    angle: 0,
-    throttle: 0,
-    mode: 'user',
-    recording: false
-}; 
 
-router.post('/start', async (req, res) => {
-    //
-    status = {
-        angle: 0,
-        throttle: 0,
-        mode: 'user',
-        recording: false
-    };
-    //
-    if (pyshell) {
-        return res.status(400).json({
-            message: 'Already running, stop first'
-        });
+class Drive {
+    constructor(car) {
+        this.car = car;
+        this.router = express.Router();
+        this.configure(this.router);
     }
-    //
-    const args = [];
-    args.push('drive');
-    if (req.query.model) args.push('--model', path.join(config.get('models.root'), req.query.model));
-    if (req.query.controller) args.push('--' + req.query.controller);
-    if (req.query.sonar) args.push('--sonar');
-    pyshell = new PythonShell('manage.py', {
-        pythonPath: config.get('car.pythonPath'),
-        scriptPath: config.get('car.path'),
-        pythonOptions: ['-u'],
-        args,
-        cwd: config.get('car.cwd')
-    });
-    res.json({
-        status: 'LAUNCHING'
-    });
-    pyshell.on('message', (message) => {
-        options.io && options.io.emit('drive', {
-            type: 'message',
-            message
-        });
-    });
-    pyshell.on('close', () => {
-        options.io && options.io.emit('drive', {
-            type: 'close',
-            message: 'Closed by python'
-        });
-        pyshell = null;
-    });
-    pyshell.on('error', (err) => {
-        options.io && options.io.emit('drive', {
-            type: 'error',
-            message: err.message
-        });
-        pyshell = null;
-    });
-});
+    configure(router) {
+        router.post('/start', async (req, res) => {
+            //
+            if (car.running) {
+                return res.status(400).json({
+                    message: 'Already running, stop first'
+                });
+            }
+            //
+            if (req.query.model) {
 
-router.post('/stop', async (req, res) => {
-    if (pyshell) {
-        pyshell.childProcess.kill('SIGINT');
-        pyshell = null;
+            } else {
+                await this.car.startRecording((message) => {
+                    options.io && options.io.emit('drive', {
+                        type: 'message',
+                        message
+                    });
+                });
+            }
+            //
+            res.json({
+                status: 'LAUNCHING'
+            });
+        });
+        
+        router.post('/stop', async (req, res) => {
+            this.car.stopRecording();
+            res.json({
+                status: 'STOPPED'
+            });
+        });
+        
+        router.setup = (opt) => {
+            options = Object.assign(options, opt);
+        }
     }
-    res.json({
-        status: 'STOPPED'
-    });
-});
-
-// drive route for donkey
-router.get('/controller', async (req, res) => {
-    res.json(status);
-});
-
-// drive route for donkey
-router.put('/controller', async (req, res) => {
-    res.json({ status: "OK"});
-});
-
-
-router.setup = (opt) => {
-    options = Object.assign(options, opt);
 }
+
     
 module.exports = router;
