@@ -89,15 +89,15 @@ class Car {
         }, 1000);
         this.recordInterval = setInterval(() => {
             if (this.status.driveMode === 'user_recording' && this.status.normalizedThrottle > 0.05) {
-                const index = padTo8(this.recordingIndex++);
+                const index = padTo8(this.status.recordingIndex++);
                 const image_path = index + '_cam_array.jpg';
-                fs.writeFile(path.join(this.recordingBasePath, 'record_', index), JSON.stringify({
+                fs.writeFile(path.join(this.status.recordingBasePath, 'record_', index), JSON.stringify({
                     'user/angle': this.status.normalizedSteering,
                     'user/throttle': this.status.normalizedThrottle,
                     'cam/image_array': image_path                    
                 }));
                 this.recorder_pyshell.send({
-                    path: path.join(this.recordingBasePath, image_path)
+                    path: path.join(this.status.recordingBasePath, image_path)
                 });
             }
         }, config.get('car.autopilot.recorder.interval'));
