@@ -6,15 +6,14 @@ const config = require('config');
 let options = {};
 
 class Drive {
-    constructor(car) {
-        this.car = car;
+    constructor() {
         this.router = express.Router();
         this.configure(this.router);
     }
     configure(router) {
         router.post('/start', async (req, res) => {
             //
-            if (car.running) {
+            if (this.options.car.running) {
                 return res.status(400).json({
                     message: 'Already running, stop first'
                 });
@@ -23,8 +22,8 @@ class Drive {
             if (req.query.model) {
 
             } else {
-                await this.car.startRecording((message) => {
-                    options.io && options.io.emit('drive', {
+                await this.options.car.startRecording((message) => {
+                    this.options.io && this.options.io.emit('drive', {
                         type: 'message',
                         message
                     });
@@ -37,15 +36,15 @@ class Drive {
         });
         
         router.post('/stop', async (req, res) => {
-            this.car.stopRecording();
+            this.options.car.stopRecording();
             res.json({
                 status: 'STOPPED'
             });
         });
         
-        router.setup = (opt) => {
-            options = Object.assign(options, opt);
-        }
+    }
+    setup = (opt) => {
+        this.options = Object.assign(options, opt);
     }
 }
 
