@@ -4,6 +4,9 @@ const i2cBus = require("i2c-bus");
 const PythonShell = require('python-shell');
 const fs = require('fs');
 const path = require('path');
+const promisify = require('util').promisify;
+
+const writeFile = promisify(fs.writeFile);
 
 const config = require('config');
 
@@ -87,11 +90,11 @@ class Car {
             console.log(JSON.stringify(this.status))
             this.io && this.io.emit('status', this.status);
         }, 1000);
-        this.recordInterval = setInterval(() => {
+        this.recordInterval = setInterval(async () => {
             if (this.status.driveMode === 'user_recording' && this.status.normalizedThrottle > 0.05) {
                 const index = padTo8(this.status.recordingIndex++);
                 const image_path = index + '_cam_array.jpg';
-                fs.writeFile(path.join(this.status.recordingBasePath, 'record_', index), JSON.stringify({
+                writeFile(path.join(this.status.recordingBasePath, `record_${index}.json`), JSON.stringify({
                     'user/angle': this.status.normalizedSteering,
                     'user/throttle': this.status.normalizedThrottle,
                     'cam/image_array': image_path                    
