@@ -108,7 +108,8 @@ class Car {
     async startRecording() {
         this.recording = true;
         // get next tub
-        this.status.recordingBasePath = path.join(config.tubes.root, 'tub_', new Date().toISOString());
+        this.status.recordingBasePath = path.join(config.tubes.root, 'tub_' + new Date().toISOString().replace(/:/g, '_'));
+        await fs.mkdir(this.status.recordingBasePath);
         this.status.recordingIndex = 0;
     }
     stopRecording() {
