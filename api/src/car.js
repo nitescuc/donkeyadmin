@@ -88,8 +88,8 @@ class Car {
             this.io && this.io.emit('status', this.status);
         }, 1000);
         this.recordInterval = setInterval(() => {
-            if (this.status.driveMode === 'user_recording' && this.status.normalizedSteering > 0.05) {
-                const index = padTo8(this.recordingIndex);
+            if (this.status.driveMode === 'user_recording' && this.status.normalizedThrottle > 0.05) {
+                const index = padTo8(this.recordingIndex++);
                 const image_path = index + '_cam_array.jpg';
                 fs.writeFile(path.join(this.recordingBasePath, 'record_', index), JSON.stringify({
                     'user/angle': this.status.normalizedSteering,
@@ -109,7 +109,7 @@ class Car {
         this.recording = true;
         // get next tub
         this.status.recordingBasePath = path.join(config.tubes.root, 'tub_' + new Date().toISOString().replace(/:/g, '_'));
-        await fs.mkdir(this.status.recordingBasePath);
+        fs.mkdirSync(this.status.recordingBasePath);
         this.status.recordingIndex = 0;
     }
     stopRecording() {
