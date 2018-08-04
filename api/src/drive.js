@@ -50,4 +50,4 @@ class Drive {
 }
 
     
-module.exports = router;
+module.exports = Drive;
