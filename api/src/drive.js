@@ -43,7 +43,7 @@ class Drive {
         });
         
     }
-    setup = (opt) => {
+    setup(opt) {
         this.options = Object.assign(options, opt);
     }
 }
