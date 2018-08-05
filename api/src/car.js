@@ -91,7 +91,7 @@ class Car {
             }
         });               
         setInterval(() => {
-            console.log(JSON.stringify(this.status))
+            //console.log(JSON.stringify(this.status))
             //this.io && this.io.emit('status', this.status);
         }, 1000);
         this.recordInterval = setInterval(async () => {
