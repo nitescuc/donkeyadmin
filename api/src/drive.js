@@ -13,7 +13,7 @@ class Drive {
     configure(router) {
         router.post('/start', async (req, res) => {
             //
-            const status = await this.options.car.setModel(req.query.model);
+            const status = this.options.car.setModel(req.query.model);
             //
             res.json({
                 status

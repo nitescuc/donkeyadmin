@@ -89,6 +89,15 @@ class Car {
                         break;
                 }
             }
+            if (message.action === 'load_model') {
+                this.modelLoaded = true;
+                this.changeMode(this.status.modeValue);
+                this.io && this.io.emit('drive', {
+                    type: 'message',
+                    message: 'Model loaded'
+                });
+                console.log('Model loaded');
+            }
         });
         this.autopilot_pyshell.on('error', (err) => {
             this.io && this.io.emit('drive', {
@@ -147,20 +156,7 @@ class Car {
                 model: path.join(config.models.root, model)
             });
         }
-        this.changeMode(this.status.modeValue);
-        return new Promise((resolve, reject) => {
-            if (this.model) {
-                this.autopilot_pyshell.once('message', (message) => {
-                    console.log('Autopilot Message', message);
-                    this.io && this.io.emit('drive', {
-                        type: 'message',
-                        message: 'Model loaded'
-                    });
-                    this.modelLoaded = true;
-                    if (message.status) resolve(message.status);
-                });
-            } else resolve('STOPPED');
-        });
+        return 'LOADING';
     }
     //
     async initialize() {
