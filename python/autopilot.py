@@ -3,6 +3,7 @@ from keras_pilot import KerasCategorical
 from camera import PiCamera
 from PIL import Image
 import numpy as np
+import time
 
 pi_camera = PiCamera()
 keras = KerasCategorical()
@@ -19,8 +20,9 @@ for line in sys.stdin:
     elif js['action'] == 'predict':
         img = pi_camera.getImage()
         print(json.dumps({ "status": "after image", "action": js['action'] }))
+        start = time.time()
         prediction = keras.run(img)
-        print(json.dumps({ "status": "after prediction", "action": js['action'] }))
-        print(json.dumps({ 'status': 'prediction', 'steering': prediction[0], 'throttle': prediction[1] }))
+        print(json.dumps({ "status": "after prediction", "action": js['action'], 'time': float(time.time() - start) }))
+        print(json.dumps({ 'status': 'prediction', 'steering': float(prediction[0]), 'throttle': float(prediction[1]) }))
     else:
         print(json.dumps({ "status": "unknown" }))
