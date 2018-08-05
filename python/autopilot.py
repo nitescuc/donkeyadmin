@@ -19,10 +19,8 @@ for line in sys.stdin:
         print(json.dumps({ "status": "ok", "action": js['action'] }))
     elif js['action'] == 'predict':
         img = pi_camera.getImage()
-        print(json.dumps({ "status": "after image", "action": js['action'] }))
         start = time.time()
         prediction = keras.run(img)
-        print(json.dumps({ "status": "after prediction", "action": js['action'], 'time': float(time.time() - start) }))
-        print(json.dumps({ 'status': 'prediction', 'steering': float(prediction[0]), 'throttle': float(prediction[1]) }))
+        print(json.dumps({ 'status': 'prediction', 'steering': float(prediction[0]), 'throttle': float(prediction[1]) }), flush=True)
     else:
         print(json.dumps({ "status": "unknown" }))

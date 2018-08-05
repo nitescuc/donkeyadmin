@@ -11,6 +11,7 @@ def linear_unbin(arr):
 class KerasCategorical():
     def load(self, model_path):
         if os.path.isfile(model_path + '.json') and os.path.isfile(model_path + '.hd5'):
+            print(json.dumps({'status': 'loading from weights'}))
             json_file = open(model_path + '.json', 'r')
             loaded_model_json = json_file.read()
             json_file.close()

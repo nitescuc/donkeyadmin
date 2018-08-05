@@ -23,7 +23,7 @@ car:
     pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
     scripts_path: 'python'
     script: 'autopilot.py'
-    interval: 10000
+    interval: 50
   statusLed:
     red: 21
     green: 20
