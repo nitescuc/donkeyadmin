@@ -106,8 +106,10 @@ class Car {
             }
         }, config.get('car.autopilot.recorder.interval'));
         this.autopilotInterval = setInterval(() => {
-            // predict
-            this.autopilot_pyshell.send({});
+            if ((this.status.driveMode === 'auto' || this.status.driveMode === 'steering_auto') && this.modelLoaded) {
+                // predict
+                this.autopilot_pyshell.send({});
+            }
         }, config.get('car.autopilot.pilot.interval'));
     }
     async startRecording() {
@@ -132,6 +134,7 @@ class Car {
             if (this.model) {
                 this.autopilot_pyshell.once('message', (message) => {
                     console.log('Autopilot Message', message);
+                    this.modelLoaded = true;
                     if (message.status) resolve(message.status);
                 });
             } else resolve('STOPPED');
