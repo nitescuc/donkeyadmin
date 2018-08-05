@@ -109,6 +109,7 @@ class Car {
                 });
             }
             if ((this.status.driveMode === 'auto' || this.status.driveMode === 'steering_auto') && this.modelLoaded) {
+                console.log('predict start');
                 // predict
                 this.autopilot_pyshell.send({
                     action: 'predict'
@@ -128,6 +129,10 @@ class Car {
     }
     setModel(model) {
         this.model = model;
+        this.io && this.io.emit('drive', {
+            type: 'message',
+            message: 'Loading model'
+        });
         if (model) {
             this.autopilot_pyshell.send({
                 action: 'load_model',
@@ -139,6 +144,10 @@ class Car {
             if (this.model) {
                 this.autopilot_pyshell.once('message', (message) => {
                     console.log('Autopilot Message', message);
+                    this.io && this.io.emit('drive', {
+                        type: 'message',
+                        message: 'Model loaded'
+                    });
                     this.modelLoaded = true;
                     if (message.status) resolve(message.status);
                 });
