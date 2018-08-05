@@ -20,6 +20,7 @@ for line in sys.stdin:
         img = pi_camera.getImage()
         print(json.dumps({ "status": "after image", "action": js['action'] }))
         prediction = keras.run(img)
+        print(json.dumps({ "status": "after prediction", "action": js['action'] }))
         print(json.dumps({ 'status': 'prediction', 'steering': prediction[0], 'throttle': prediction[1] }))
     else:
         print(json.dumps({ "status": "unknown" }))
