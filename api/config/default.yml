@@ -22,12 +22,8 @@ car:
   autopilot:
     pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
     scripts_path: 'python'
-    pilot: 
-      script: 'autopilot.py'
-      interval: 50
-    recorder:
-      script: 'recorder.py'
-      interval: 50
+    script: 'autopilot.py'
+    interval: 50
   statusLed:
     red: 21
     green: 20

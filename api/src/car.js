@@ -56,15 +56,15 @@ class Car {
         //
         this.actuator = new Actuator(config.get('car.actuator'));
         //
-        this.recorder_pyshell = new PythonShell(config.get('car.autopilot.recorder.script'), {
+/*        this.recorder_pyshell = new PythonShell(config.get('car.autopilot.recorder.script'), {
             pythonPath: config.get('car.autopilot.pythonPath'),
             scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             mode: 'json',
             pythonOptions: ['-u']
-        });
+        });*/
         //
-        this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.pilot.script'), {
+        this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.script'), {
             pythonPath: config.get('car.autopilot.pythonPath'),
             scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
@@ -74,17 +74,19 @@ class Car {
         this.autopilot_pyshell.on('message', (message) => {
             console.log('Autopilot Message', message);
             message = message || {};
-            switch(this.status.driveMode) {
-                case 'user':
-                case 'user_recording':
-                    break;
-                case 'auto_steering':
-                    this.setSteering(message.steering);
-                    break;
-                case 'auto':
-                    this.setSteering(message.steering);
-                    this.setThrottle(message.throttle);
-                    break;
+            if (message.status === 'prediction') {
+                switch(this.status.driveMode) {
+                    case 'user':
+                    case 'user_recording':
+                        break;
+                    case 'auto_steering':
+                        this.setSteering(message.steering);
+                        break;
+                    case 'auto':
+                        this.setSteering(message.steering);
+                        this.setThrottle(message.throttle);
+                        break;
+                }
             }
         });               
         setInterval(() => {
@@ -100,17 +102,18 @@ class Car {
                     'user/throttle': this.status.normalizedThrottle,
                     'cam/image_array': image_path                    
                 }));
-                this.recorder_pyshell.send({
+                this.autopilot_pyshell.send({
+                    action: 'record',
                     path: path.join(this.status.recordingBasePath, image_path)
                 });
             }
-        }, config.get('car.autopilot.recorder.interval'));
-        this.autopilotInterval = setInterval(() => {
             if ((this.status.driveMode === 'auto' || this.status.driveMode === 'steering_auto') && this.modelLoaded) {
                 // predict
-                this.autopilot_pyshell.send({});
+                this.autopilot_pyshell.send({
+                    action: 'predict'
+                });
             }
-        }, config.get('car.autopilot.pilot.interval'));
+        }, config.get('car.autopilot.interval'));
     }
     async startRecording() {
         this.recording = true;
@@ -126,6 +129,7 @@ class Car {
         this.model = model;
         if (model) {
             this.autopilot_pyshell.send({
+                action: 'load_model',
                 model: path.join(config.models.root, model)
             });
         }
