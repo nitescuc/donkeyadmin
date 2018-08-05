@@ -89,6 +89,13 @@ class Car {
                         break;
                 }
             }
+        });
+        this.autopilot_pyshell.on('error', (err) => {
+            this.io && this.io.emit('drive', {
+                type: 'error',
+                message: err.message
+            });
+            console.log(err.message);
         });               
         setInterval(() => {
             //console.log(JSON.stringify(this.status))
