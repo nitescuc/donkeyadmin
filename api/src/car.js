@@ -47,6 +47,7 @@ class Car {
                 this.setThrottle(value);
         });
         this.remote.on('mode', (value) => {
+            if (Math.abs(value - this.status.modeValue) < 100) return;
             this.status.modeValue = value;
             this.changeMode(value);
         });
@@ -90,7 +91,7 @@ class Car {
             }
         });               
         setInterval(() => {
-            //console.log(JSON.stringify(this.status))
+            console.log(JSON.stringify(this.status))
             //this.io && this.io.emit('status', this.status);
         }, 1000);
         this.recordInterval = setInterval(async () => {
@@ -166,18 +167,22 @@ class Car {
     }
     changeMode(value) {
         if (this.status.modeValue > 1500) {
-            if (this.model) this.status.driveMode = 'auto';
-            else {
-                this.status.driveMode = 'user_recording';
-                this.startRecording();
-            }
+            if (this.model) {
+                if (this.status.driveMode !== 'auto') this.status.driveMode = 'auto';
+            else 
+                if (this.status.driveMode !== 'user_recording') {
+                    this.status.driveMode = 'user_recording';
+                    this.startRecording();
+                }
         }
         if (this.status.modeValue < 1500) {
-            if (this.model) this.status.driveMode = 'auto_steering';
-            else {
-                this.status.driveMode = 'user';
-                this.stopRecording();
-            }
+            if (this.model) {
+                if (this.status.driveMode !== 'auto_steering') this.status.driveMode = 'auto_steering';
+            } else 
+                if (this.status.driveMode !== 'user') {
+                    this.status.driveMode = 'user';
+                    this.stopRecording();
+                }
         }
         this.statusLed.setStatus(this.status.driveMode);
     }
