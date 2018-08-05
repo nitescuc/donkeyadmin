@@ -106,7 +106,8 @@ class Car {
             }
         }, config.get('car.autopilot.recorder.interval'));
         this.autopilotInterval = setInterval(() => {
-            this.record(this.status);
+            // predict
+            this.autopilot_pyshell.send({});
         }, config.get('car.autopilot.pilot.interval'));
     }
     async startRecording() {
