@@ -5,7 +5,7 @@ from PIL import Image
 import numpy as np
 
 pi_camera = PiCamera()
-keras_pilot = KerasCategorical()
+keras = KerasCategorical()
 
 for line in sys.stdin:
     js = json.loads(line)
@@ -14,10 +14,10 @@ for line in sys.stdin:
         img.save(js['path'])
         print(json.dumps({ "status": "ok" }))
     elif js['action'] == 'load_model':
-        keras_pilot.load(js['model'])
+        keras.load(js['model'])
         print(json.dumps({ "status": "ok" }))
     elif js['action'] == 'predict':
-        prediction = keras_pilot.run(pi_camera.getImage())
+        prediction = keras.run(pi_camera.getImage())
         print(json.dumps({ 'status': 'prediction', 'steering': prediction[0], 'throttle': prediction[1] }))
     else:
         print(json.dumps({ "status": "unknown" }))

@@ -140,6 +140,7 @@ class Car {
             type: 'message',
             message: 'Loading model'
         });
+        this.modelLoaded = false;
         if (model) {
             this.autopilot_pyshell.send({
                 action: 'load_model',
