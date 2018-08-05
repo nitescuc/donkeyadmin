@@ -13,30 +13,15 @@ class Drive {
     configure(router) {
         router.post('/start', async (req, res) => {
             //
-            if (this.options.car.running) {
-                return res.status(400).json({
-                    message: 'Already running, stop first'
-                });
-            }
-            //
-            if (req.query.model) {
-
-            } else {
-                await this.options.car.startRecording((message) => {
-                    this.options.io && this.options.io.emit('drive', {
-                        type: 'message',
-                        message
-                    });
-                });
-            }
+            const status = await this.options.car.setModel(req.query.model);
             //
             res.json({
-                status: 'LAUNCHING'
+                status
             });
         });
         
         router.post('/stop', async (req, res) => {
-            this.options.car.stopRecording();
+            this.options.car.setModel();
             res.json({
                 status: 'STOPPED'
             });

@@ -10,6 +10,8 @@ class Actuator {
         this.throttleMin = config.throttleMin;
         this.remoteThrottleMax = config.remoteThrottleMax;
         this.remoteThrottleMin = config.remoteThrottleMin;
+        this.steeringMax = config.steeringMax;
+        this.steeringMin = config.steeringMin;
     }
 
     async initialize(options) {
@@ -33,6 +35,9 @@ class Actuator {
         if (Math.abs(value) <= 1) value = 1500 + value * 500;
         this.steering = value;
         this.normalizedSteering = this.normalizeSteering(value);
+        // protection
+        if (value > this.steeringMax) value = this.steeringMax;
+        if (value < this.steeringMin) value = this.steetingMin;
         this.pwm.setPulseLength(this.steeringChannel, value);
     }
     normalizeThrottle(value) {

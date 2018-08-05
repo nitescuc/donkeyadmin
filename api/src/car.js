@@ -34,7 +34,7 @@ class Car {
             driveMode: 'user'
         }
         this.io = options.io;
-        //
+        // remote setup
         this.remote = new RemoteController({
             channels: config.get('car.remote.channels')
         });
@@ -50,7 +50,7 @@ class Car {
             this.status.modeValue = value;
             this.changeMode(value);
         });
-        //
+        // status led
         this.statusLed = new StatusLed(config.get('car.statusLed'));
         this.statusLed.setStatus(this.status.driveMode);
         //
@@ -64,7 +64,7 @@ class Car {
             pythonOptions: ['-u']
         });
         //
-/*        this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.pilot.script'), {
+        this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.pilot.script'), {
             pythonPath: config.get('car.autopilot.pythonPath'),
             scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
             cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
@@ -72,9 +72,11 @@ class Car {
             pythonOptions: ['-u']
         });
         this.autopilot_pyshell.on('message', (message) => {
+            console.log('Autopilot Message', message);
             message = message || {};
             switch(this.status.driveMode) {
                 case 'user':
+                case 'user_recording':
                     break;
                 case 'auto_steering':
                     this.setSteering(message.steering);
@@ -84,11 +86,10 @@ class Car {
                     this.setThrottle(message.throttle);
                     break;
             }
-        });
-*/               
+        });               
         setInterval(() => {
-            console.log(JSON.stringify(this.status))
-            this.io && this.io.emit('status', this.status);
+            //console.log(JSON.stringify(this.status))
+            //this.io && this.io.emit('status', this.status);
         }, 1000);
         this.recordInterval = setInterval(async () => {
             if (this.status.driveMode === 'user_recording' && this.status.normalizedThrottle > 0.05) {
@@ -104,9 +105,9 @@ class Car {
                 });
             }
         }, config.get('car.autopilot.recorder.interval'));
-/*        this.autopilotInterval = setInterval(() => {
+        this.autopilotInterval = setInterval(() => {
             this.record(this.status);
-        }, config.get('car.autopilot.pilot.interval'));*/
+        }, config.get('car.autopilot.pilot.interval'));
     }
     async startRecording() {
         this.recording = true;
@@ -118,11 +119,22 @@ class Car {
     stopRecording() {
         this.recording = false;
     }
-    startAutodrive(model) {
+    setModel(model) {
         this.model = model;
-    }
-    stopAutodrive(model) {
-        this.model = null;
+        if (model) {
+            this.autopilot_pyshell.send({
+                model: path.join(config.models.root, model)
+            });
+        }
+        this.changeMode(this.status.modeValue);
+        return new Promise((resolve, reject) => {
+            if (this.model) {
+                this.autopilot_pyshell.once('message', (message) => {
+                    console.log('Autopilot Message', message);
+                    if (message.status) resolve(message.status);
+                });
+            } else resolve('STOPPED');
+        });
     }
     //
     async initialize() {
@@ -146,18 +158,18 @@ class Car {
     }
     changeMode(value) {
         if (this.status.modeValue > 1500) {
-            if (this.status.driveMode === 'user') {
+            if (this.model) this.status.driveMode = 'auto';
+            else {
                 this.status.driveMode = 'user_recording';
                 this.startRecording();
             }
-            if (this.status.driveMode === 'auto_steering') this.status.driveMode = 'auto';
         }
         if (this.status.modeValue < 1500) {
-            if (this.status.driveMode === 'user_recording') {
+            if (this.model) this.status.driveMode = 'auto_steering';
+            else {
                 this.status.driveMode = 'user';
                 this.stopRecording();
             }
-            if (this.status.driveMode === 'auto') this.status.driveMode = 'auto_steering';
         }
         this.statusLed.setStatus(this.status.driveMode);
     }
