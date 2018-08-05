@@ -17,7 +17,6 @@ for line in sys.stdin:
         keras.load(js['model'])
         print(json.dumps({ "status": "ok", "action": js['action'] }))
     elif js['action'] == 'predict':
-        print(json.dumps({ "status": "before predict", "action": js['action'] }))
         img = pi_camera.getImage()
         print(json.dumps({ "status": "after image", "action": js['action'] }))
         prediction = keras.run(img)

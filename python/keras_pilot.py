@@ -9,6 +9,7 @@ def linear_unbin(arr):
 
 class KerasCategorical():
     def load(self, model_path):
+        print(json.dumps({'status', 'into load model'}))
         self.model = keras.models.load_model(model_path)
 
     def run(self, img_arr):
