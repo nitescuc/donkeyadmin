@@ -178,7 +178,7 @@ class Car {
         if (this.status.modeValue > 1500) {
             if (this.model) {
                 if (this.status.driveMode !== 'auto') this.status.driveMode = 'auto';
-            else 
+            } else 
                 if (this.status.driveMode !== 'user_recording') {
                     this.status.driveMode = 'user_recording';
                     this.startRecording();
