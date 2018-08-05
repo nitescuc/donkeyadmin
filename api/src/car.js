@@ -76,7 +76,7 @@ class Car {
             //console.log('Autopilot Message', message);
             message = message || {};
             if (message.status === 'prediction') {
-                console.log('predict took', Date.now() - this.predictStart);
+                //console.log('predict took', Date.now() - this.predictStart);
                 switch(this.status.driveMode) {
                     case 'user':
                     case 'user_recording':
