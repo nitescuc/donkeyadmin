@@ -108,7 +108,7 @@ class Car {
                     path: path.join(this.status.recordingBasePath, image_path)
                 });
             }
-            if ((this.status.driveMode === 'auto' || this.status.driveMode === 'steering_auto') && this.modelLoaded) {
+            if ((this.status.driveMode === 'auto' || this.status.driveMode === 'auto_steering') && this.modelLoaded) {
                 console.log('predict start');
                 // predict
                 this.autopilot_pyshell.send({
