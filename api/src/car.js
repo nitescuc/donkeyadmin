@@ -112,13 +112,13 @@ class Car {
         this.timer.on('interrupt', (level) => {
             this.driveLoop();
         });
-        this.timer.pwmFrequency(config.get('car.autopilot.interval'));
+        this.timer.pwmFrequency(1000/config.get('car.autopilot.interval'));
         this.timer.pwmWrite(1);
 //        this.recordInterval = setInterval(async () => {
 //        }, config.get('car.autopilot.interval'));
     }
     driveLoop() {
-        console.log(Date.now());
+        //console.log(Date.now());
         if (this.status.driveMode === 'user_recording' && this.status.normalizedThrottle > 0.05) {
             const index = padTo8(this.status.recordingIndex++);
             const image_path = index + '_cam_array.jpg';
