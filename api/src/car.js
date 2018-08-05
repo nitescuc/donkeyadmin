@@ -73,9 +73,10 @@ class Car {
             pythonOptions: ['-u']
         });
         this.autopilot_pyshell.on('message', (message) => {
-            console.log('Autopilot Message', message);
+            //console.log('Autopilot Message', message);
             message = message || {};
             if (message.status === 'prediction') {
+                console.log('predict took', Date.now() - this.predictStart);
                 switch(this.status.driveMode) {
                     case 'user':
                     case 'user_recording':
@@ -125,8 +126,9 @@ class Car {
                 });
             }
             if ((this.status.driveMode === 'auto' || this.status.driveMode === 'auto_steering') && this.modelLoaded) {
-                console.log('predict start');
+                //console.log('predict start');
                 // predict
+                this.predictStart = Date.now();
                 this.autopilot_pyshell.send({
                     action: 'predict'
                 });

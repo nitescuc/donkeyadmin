@@ -37,7 +37,7 @@ class Actuator {
         this.normalizedSteering = this.normalizeSteering(value);
         // protection
         if (value > this.steeringMax) value = this.steeringMax;
-        if (value < this.steeringMin) value = this.steetingMin;
+        if (value < this.steeringMin) value = this.steeringMin;
         this.pwm.setPulseLength(this.steeringChannel, value);
     }
     normalizeThrottle(value) {
