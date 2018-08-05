@@ -1,5 +1,6 @@
 "use strict"
 
+const Gpio = require('pigpio').Gpio;
 const i2cBus = require("i2c-bus");
 const PythonShell = require('python-shell');
 const fs = require('fs');
@@ -57,14 +58,6 @@ class Car {
         //
         this.actuator = new Actuator(config.get('car.actuator'));
         //
-/*        this.recorder_pyshell = new PythonShell(config.get('car.autopilot.recorder.script'), {
-            pythonPath: config.get('car.autopilot.pythonPath'),
-            scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
-            cwd: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
-            mode: 'json',
-            pythonOptions: ['-u']
-        });*/
-        //
         this.autopilot_pyshell = new PythonShell(config.get('car.autopilot.script'), {
             pythonPath: config.get('car.autopilot.pythonPath'),
             scriptPath: path.join(__dirname, '../..', config.get('car.autopilot.scripts_path')),
@@ -107,33 +100,48 @@ class Car {
             });
             console.log(err.message);
         });               
-        setInterval(() => {
-            //console.log(JSON.stringify(this.status))
-            //this.io && this.io.emit('status', this.status);
-        }, 1000);
-        this.recordInterval = setInterval(async () => {
-            if (this.status.driveMode === 'user_recording' && this.status.normalizedThrottle > 0.05) {
-                const index = padTo8(this.status.recordingIndex++);
-                const image_path = index + '_cam_array.jpg';
-                writeFile(path.join(this.status.recordingBasePath, `record_${index}.json`), JSON.stringify({
-                    'user/angle': this.status.normalizedSteering,
-                    'user/throttle': this.status.normalizedThrottle,
-                    'cam/image_array': image_path                    
-                }));
-                this.autopilot_pyshell.send({
-                    action: 'record',
-                    path: path.join(this.status.recordingBasePath, image_path)
-                });
-            }
-            if ((this.status.driveMode === 'auto' || this.status.driveMode === 'auto_steering') && this.modelLoaded) {
-                //console.log('predict start');
-                // predict
-                this.predictStart = Date.now();
-                this.autopilot_pyshell.send({
-                    action: 'predict'
-                });
-            }
-        }, config.get('car.autopilot.interval'));
+/*        setInterval(() => {
+            console.log(JSON.stringify(this.status))
+            this.io && this.io.emit('status', this.status);
+        }, 1000);*/
+        // make timer for loop
+        this.timer = new Gpio(config.get('car.timerPin'), {
+            mode: Gpio.OUTPUT,
+            edge: Gpio.RISING_EDGE
+        });
+        this.timer.on('interrupt', (level) => {
+            this.driveLoop();
+        });
+        this.timer.pwmFrequency(config.get('car.autopilot.interval'));
+        this.timer.pwmWrite(1);
+//        this.recordInterval = setInterval(async () => {
+//        }, config.get('car.autopilot.interval'));
+    }
+    driveLoop() {
+        console.log(Date.now());
+        if (this.status.driveMode === 'user_recording' && this.status.normalizedThrottle > 0.05) {
+            const index = padTo8(this.status.recordingIndex++);
+            const image_path = index + '_cam_array.jpg';
+            writeFile(path.join(this.status.recordingBasePath, `record_${index}.json`), JSON.stringify({
+                'user/mode': 'user',
+                'user/angle': this.status.normalizedSteering,
+                'user/throttle': this.status.normalizedThrottle,
+                'cam/image_array': image_path,
+                'timestamp': Date.now()                    
+            }));
+            this.autopilot_pyshell.send({
+                action: 'record',
+                path: path.join(this.status.recordingBasePath, image_path)
+            });
+        }
+        if ((this.status.driveMode === 'auto' || this.status.driveMode === 'auto_steering') && this.modelLoaded) {
+            //console.log('predict start');
+            // predict
+            this.predictStart = Date.now();
+            this.autopilot_pyshell.send({
+                action: 'predict'
+            });
+        }
     }
     async startRecording() {
         this.recording = true;

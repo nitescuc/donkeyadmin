@@ -5,6 +5,7 @@ models:
 car:
   path: '/home/pi/d2'
   cwd: '/home/pi'
+  timerPin: 17
   remote:
     channels:
       steering: 18
