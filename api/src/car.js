@@ -69,7 +69,8 @@ class Car {
             //console.log('Autopilot Message', message);
             message = message || {};
             if (message.status === 'prediction') {
-                //console.log('predict took', Date.now() - this.predictStart);
+                this.ready = true;
+                console.log('predict took', Date.now() - this.predictStart);
                 switch(this.status.driveMode) {
                     case 'user':
                     case 'user_recording':
@@ -85,6 +86,7 @@ class Car {
             }
             if (message.action === 'load_model') {
                 this.modelLoaded = true;
+                this.ready = true;
                 this.changeMode(this.status.modeValue);
                 this.io && this.io.emit('drive', {
                     type: 'message',
@@ -134,8 +136,9 @@ class Car {
                 path: path.join(this.status.recordingBasePath, image_path)
             });
         }
-        if ((this.status.driveMode === 'auto' || this.status.driveMode === 'auto_steering') && this.modelLoaded) {
+        if ((this.status.driveMode === 'auto' || this.status.driveMode === 'auto_steering') && this.ready) {
             //console.log('predict start');
+            this.ready = false;
             // predict
             this.predictStart = Date.now();
             this.autopilot_pyshell.send({
