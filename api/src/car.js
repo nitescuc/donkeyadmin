@@ -165,6 +165,8 @@ class Car {
                 action: 'load_model',
                 model: path.join(config.models.root, model)
             });
+        } else {
+            this.changeMode(this.status.modeValue);            
         }
         return 'LOADING';
     }
