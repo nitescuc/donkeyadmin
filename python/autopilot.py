@@ -21,6 +21,6 @@ for line in sys.stdin:
         img = pi_camera.getImage()
         start = time.time()
         prediction = keras.run(img)
-        print(json.dumps({ 'status': 'prediction', 'steering': float(prediction[0]), 'throttle': float(prediction[1]) }), flush=True)
+        print(json.dumps({ 'status': 'prediction', 'steering': float(prediction[0]), 'throttle': float(prediction[1]), 'time': float(time.time() - start) }), flush=True)
     else:
         print(json.dumps({ "status": "unknown" }))

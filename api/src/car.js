@@ -70,7 +70,7 @@ class Car {
             message = message || {};
             if (message.status === 'prediction') {
                 this.ready = true;
-                console.log('predict took', Date.now() - this.predictStart);
+                console.log('predict took', Date.now() - this.predictStart, message.time);
                 switch(this.status.driveMode) {
                     case 'user':
                     case 'user_recording':
