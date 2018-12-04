@@ -34,6 +34,7 @@ router.post('/start', async (req, res) => {
     if (req.query.model) args.push('--model', path.join(config.get('models.root'), req.query.model));
     if (req.query.controller) args.push('--' + req.query.controller);
     if (req.query.sonar) args.push('--sonar');
+    if (req.query.record_on_local) args.push('--record_on_local');
     pyshell = new PythonShell('manage.py', {
         pythonPath: config.get('car.pythonPath'),
         scriptPath: config.get('car.path'),
