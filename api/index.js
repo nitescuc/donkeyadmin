@@ -21,8 +21,8 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, '../app/build'), {
     extensions: ['html', 'css', 'js', 'png']
 }));
-app.use('/tubes', tubes);
-app.use('/models', models);
-app.use('/drive', drive);
+app.use('/api/tubes', tubes);
+app.use('/api/models', models);
+app.use('/api/drive', drive);
 
 http.listen(8080);
