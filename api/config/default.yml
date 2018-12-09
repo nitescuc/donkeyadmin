@@ -1,8 +1,8 @@
 tubes:
-  root: '/home/odroid/d2/data'
+  root: '/home/pi/d2/data'
 models:
-  root: '/home/odroid/d2/models'
+  root: '/home/pi/models'
 car:
-  path: '/home/odroid/d2'
-  cwd: '/home/odroid'
+  path: '/home/pi/d2'
+  cwd: '/home/pi'
   pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
