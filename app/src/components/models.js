@@ -43,7 +43,7 @@ class Models extends Component {
         return (
             <div>
                 <h1>Models</h1>
-                <form action={`${this.state.apiBaseUrl || ''}/models`} method="post" encType="multipart/form-data" target="_blank">
+                <form action={`${this.state.apiBaseUrl || ''}/api/models`} method="post" encType="multipart/form-data" target="_blank">
                     <div className="input-group mb-3">
                         <div className="custom-file">
                             <input type="file" className="custom-file-input" id="inputGroupFile02" name="model" onChange={this.onFileChange()}/>
