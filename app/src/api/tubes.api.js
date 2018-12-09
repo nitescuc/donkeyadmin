@@ -9,7 +9,7 @@ export const getTubes = async (baseUrl, onMessage) => {
 
 export const downloadTube = (baseUrl, tubeUrl, tubeName, onMessage) => {
     const oReq = new XMLHttpRequest();
-    oReq.open("GET", `${baseUrl || ''}/api/${tubeUrl}`, true);
+    oReq.open("GET", `${baseUrl || ''}/api${tubeUrl}`, true);
     oReq.responseType = "arraybuffer";
 
     let lastLoaded = 0;
