@@ -3,6 +3,8 @@ const PythonShell = require('python-shell');
 const path = require('path');
 const config = require('config');
 
+const request = require('request-promise-native');
+
 const router = express.Router();
 
 let pyshell = null;
@@ -74,6 +76,22 @@ router.post('/stop', async (req, res) => {
     }
     res.json({
         status: 'STOPPED'
+    });
+});
+
+router.post('/model/:model_id', async (req, res) => {
+    if (req.params.model_id) {
+        await request({
+            method: 'POST',
+            uri: `${config.get('api.baseUrl')}/config`,
+            body: {
+                model_path: `${config.get('models.root')}/${req.params.model_id}`
+            },
+            json: true
+        })
+    }
+    res.json({
+        status: 'OK'
     });
 });
 
