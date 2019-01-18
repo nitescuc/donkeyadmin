@@ -2,6 +2,7 @@ const express = require('express');
 const PythonShell = require('python-shell');
 const path = require('path');
 const config = require('config');
+const request = require('request-promise-native');
 
 const router = express.Router();
 
@@ -16,54 +17,11 @@ let status = {
 
 router.post('/start', async (req, res) => {
     //
-    status = {
-        angle: 0,
-        throttle: 0,
-        mode: 'user',
-        recording: false
-    };
-    //
-    if (pyshell) {
-        return res.status(400).json({
-            message: 'Already running, stop first'
-        });
-    }
-    //
-    const args = [];
-    args.push('drive');
+//    docker run -it --rm -p 8887:8887 -v ~/d2:/d2 -v ~/donkey:/donkey --device=/dev/video0:/dev/video0 --device=/dev/ttyACM0:/dev/ttyACM0 tazlogic/donkey:3.0.0_1.8.0 python /d2/manage.py drive
     if (req.query.model) args.push('--model', path.join(config.get('models.root'), req.query.model));
-    if (req.query.controller) args.push('--' + req.query.controller);
-    if (req.query.sonar) args.push('--sonar');
     if (req.query.record_on_local) args.push('--record_on_local');
-    pyshell = new PythonShell('manage.py', {
-        pythonPath: config.get('car.pythonPath'),
-        scriptPath: config.get('car.path'),
-        pythonOptions: ['-u'],
-        args,
-        cwd: config.get('car.cwd')
-    });
     res.json({
         status: 'LAUNCHING'
-    });
-    pyshell.on('message', (message) => {
-        options.io && options.io.emit('drive', {
-            type: 'message',
-            message
-        });
-    });
-    pyshell.on('close', () => {
-        options.io && options.io.emit('drive', {
-            type: 'close',
-            message: 'Closed by python'
-        });
-        pyshell = null;
-    });
-    pyshell.on('error', (err) => {
-        options.io && options.io.emit('drive', {
-            type: 'error',
-            message: err.message
-        });
-        pyshell = null;
     });
 });
 

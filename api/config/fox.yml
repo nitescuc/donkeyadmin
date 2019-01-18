@@ -3,6 +3,7 @@ tubes:
 models:
   root: '/home/odroid/d2/models'
 car:
+  baseUrl: 'http://localhost:8887'
   path: '/home/pi/d2'
   cwd: '/home/pi'
   pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'

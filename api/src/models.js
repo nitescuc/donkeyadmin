@@ -24,7 +24,7 @@ router.get('/', async (req, res) => {
         url: `/models/${dir}`,
         $links: {
             drive: {
-                $url: `/drive/start?model=${dir}&sonar=true&controller=pirf`,
+                $url: `${config.get('car.baseUrl')}/config/start?model=${dir}&sonar=true&controller=pirf`,
                 $method: 'POST'
             },
             stop: {
