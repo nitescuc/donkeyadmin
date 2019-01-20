@@ -86,7 +86,7 @@ router.post('/model/:model_id', async (req, res) => {
             method: 'POST',
             uri: `${config.get('api.baseUrl')}/config`,
             body: {
-                model_path: `${config.get('models.root')}/${req.params.model_id}`
+                model_path: `${root}/${req.params.model_id}`
             },
             json: true
         })
