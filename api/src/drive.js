@@ -81,6 +81,7 @@ router.post('/stop', async (req, res) => {
 
 router.post('/model/:model_id', async (req, res) => {
     if (req.params.model_id) {
+        const root = config.has('models.dockerRoot') ? config.get('models.dockerRoot') : config.get('models.root');
         await request({
             method: 'POST',
             uri: `${config.get('api.baseUrl')}/config`,
