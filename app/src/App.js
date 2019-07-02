@@ -34,7 +34,25 @@ class App extends Component {
     const self = this;
     return (e) => {
       executeLink(self.state.apiBaseUrl, {
-        $url: '/drive/start?controller=pirf&sonar=yes',
+        $url: '/drive/start',
+        $method: 'POST'
+      }, self.onMessage);
+    }
+  }
+  record() {
+    const self = this;
+    return (e) => {
+      executeLink(self.state.apiBaseUrl, {
+        $url: '/drive/record',
+        $method: 'POST'
+      }, self.onMessage);
+    }
+  }
+  calibrate() {
+    const self = this;
+    return (e) => {
+      executeLink(self.state.apiBaseUrl, {
+        $url: '/drive/calibrate',
         $method: 'POST'
       }, self.onMessage);
     }
@@ -59,6 +77,8 @@ class App extends Component {
             <div className="input-group-append">
               <button type="button" className="btn btn-outline-primary" id="basic-addon2" onClick={this.validateApiUrl()}>Refresh</button>
               <button type="button" className="btn btn-outline-primary" id="basic-addon2" onClick={this.drive()}>Drive</button>
+              <button type="button" className="btn btn-outline-primary" id="basic-addon2" onClick={this.record()}>Record</button>
+              <button type="button" className="btn btn-outline-primary" id="basic-addon2" onClick={this.calibrate()}>Calibrate</button>
               <button type="button" className="btn btn-outline-danger" id="basic-addon2" onClick={this.stop()}>Stop</button>
             </div>          
             </div>

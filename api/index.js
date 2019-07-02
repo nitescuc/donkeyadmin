@@ -18,11 +18,13 @@ io.on('connection', function(socket){
 
 app.use(cors());
 //
-app.use(express.static(path.join(__dirname, '../app/build'), {
-    extensions: ['html', 'css', 'js', 'png']
-}));
 app.use('/api/tubes', tubes);
 app.use('/api/models', models);
 app.use('/api/drive', drive);
+
+/*app.use(express.static(path.join(__dirname, '../app/build'), {
+    extensions: ['html', 'css', 'js', 'png']
+}));*/
+app.use(express.static(path.join(__dirname, '../app/build')));
 
 http.listen(8080);

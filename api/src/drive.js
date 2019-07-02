@@ -16,23 +16,9 @@ let status = {
     recording: false
 }; 
 
-router.post('/start', async (req, res) => {
-    //
-    status = {
-        angle: 0,
-        throttle: 0,
-        mode: 'user',
-        recording: false
-    };
-    //
-    if (pyshell) {
-        return res.status(400).json({
-            message: 'Already running, stop first'
-        });
-    }
-    //
+const startPython = (mode) => {
     const args = [];
-    args.push('drive');
+    args.push(mode);
     if (req.query.model) args.push('--model', path.join(config.get('models.root'), req.query.model));
     if (req.query.controller) args.push('--' + req.query.controller);
     if (req.query.sonar) args.push('--sonar');
@@ -67,6 +53,58 @@ router.post('/start', async (req, res) => {
         });
         pyshell = null;
     });
+}
+
+router.post('/start', async (req, res) => {
+    //
+    status = {
+        angle: 0,
+        throttle: 0,
+        mode: 'user',
+        recording: false
+    };
+    //
+    if (pyshell) {
+        return res.status(400).json({
+            message: 'Already running, stop first'
+        });
+    }
+    //
+    startPython('drive');
+});
+router.post('/record', async (req, res) => {
+    //
+    status = {
+        angle: 0,
+        throttle: 0,
+        mode: 'user',
+        recording: false
+    };
+    //
+    if (pyshell) {
+        return res.status(400).json({
+            message: 'Already running, stop first'
+        });
+    }
+    //
+    startPython('record');
+});
+router.post('/calibrate', async (req, res) => {
+    //
+    status = {
+        angle: 0,
+        throttle: 0,
+        mode: 'user',
+        recording: false
+    };
+    //
+    if (pyshell) {
+        return res.status(400).json({
+            message: 'Already running, stop first'
+        });
+    }
+    //
+    startPython('calibrate');
 });
 
 router.post('/stop', async (req, res) => {
