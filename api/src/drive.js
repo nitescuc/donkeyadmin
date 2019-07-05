@@ -26,9 +26,6 @@ const startPython = (mode) => {
         args,
         cwd: config.get('car.cwd')
     });
-    res.json({
-        status: 'LAUNCHING'
-    });
     pyshell.on('message', (message) => {
         options.io && options.io.emit('drive', {
             type: 'message',
@@ -67,6 +64,10 @@ router.post('/start', async (req, res) => {
     }
     //
     startPython('drive');
+
+    res.json({
+        status: 'LAUNCHING'
+    });
 });
 router.post('/record', async (req, res) => {
     //
@@ -84,6 +85,10 @@ router.post('/record', async (req, res) => {
     }
     //
     startPython('record');
+
+    res.json({
+        status: 'LAUNCHING'
+    });
 });
 router.post('/calibrate', async (req, res) => {
     //
@@ -101,6 +106,10 @@ router.post('/calibrate', async (req, res) => {
     }
     //
     startPython('calibrate');
+
+    res.json({
+        status: 'LAUNCHING'
+    });
 });
 
 router.post('/stop', async (req, res) => {
