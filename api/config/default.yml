@@ -8,3 +8,5 @@ car:
   path: '/home/pi/d2'
   cwd: '/home/pi'
   pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
+configServer:
+  bind: 'tcp://*:5556'

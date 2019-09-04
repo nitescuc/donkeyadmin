@@ -5,6 +5,8 @@ const config = require('config');
 
 const request = require('request-promise-native');
 
+const { ConfigServer } = require('./configServer');
+
 const router = express.Router();
 
 let pyshell = null;
@@ -125,11 +127,17 @@ router.post('/stop', async (req, res) => {
 router.post('/model/:model_id', async (req, res) => {
     if (req.params.model_id) {
         const root = config.has('models.dockerRoot') ? config.get('models.dockerRoot') : config.get('models.root');
+        const model_path = `${root}/${req.params.model_id}`;
+
+        ConfigServer.getServer().setConfig({
+            model_path
+        });
+
         await request({
             method: 'POST',
             uri: `${config.get('api.baseUrl')}/config`,
             body: {
-                model_path: `${root}/${req.params.model_id}`
+                model_path
             },
             json: true
         })
