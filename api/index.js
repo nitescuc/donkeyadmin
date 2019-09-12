@@ -6,6 +6,9 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
 const tubes = require('./src/tubes');
+tubes.setup({
+    io
+});
 const models = require('./src/models');
 const drive = require('./src/drive');
 drive.setup({
