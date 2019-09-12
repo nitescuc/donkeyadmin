@@ -6,6 +6,14 @@ export const getTubes = async (baseUrl, onMessage) => {
     if (onMessage) onMessage(`${new Date().toISOString()} - GET - ${url} - ${resp.status}`);
     return (resp || {}).body || [];
 }
+export const learnAws = async (baseUrl, tubeUrl, tubeName, onMessage) => {
+    const url = `${baseUrl || ''}/api${tubeUrl}/learn-aws`;
+    const resp = await request.post(url, {
+        body: {}
+    });
+    if (onMessage) onMessage(`${new Date().toISOString()} - POST - ${url} - ${resp.status}`);
+    return (resp || {}).body || [];
+}
 
 export const downloadTube = (baseUrl, tubeUrl, tubeName, onMessage) => {
     const oReq = new XMLHttpRequest();

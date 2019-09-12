@@ -19,6 +19,12 @@ class MessageBox extends Component {
                 message: `${new Date().toISOString()} - DRIVE - ${message.type} - ${message.message}`
             });
         });
+        this.socket.on('tube', (message) => {
+            this.props.onMessage({
+                type: message.type,
+                message: `${new Date().toISOString()} - TUBE - ${message.type} - ${message.message}`
+            });
+        });
     }
     componentWillUnmount() {
         if (this.socket) this.socket.close();

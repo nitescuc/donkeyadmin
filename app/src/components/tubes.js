@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getTubes, downloadTube } from '../api/tubes.api';
+import { getTubes, downloadTube, learnAws } from '../api/tubes.api';
 import { basename } from 'path';
 
 class Tubes extends Component {
@@ -28,6 +28,11 @@ class Tubes extends Component {
             downloadTube(baseurl, tuburl, tubname, onMessage);
         }
     }
+    learnAwsClick(baseurl, tuburl, tubname, onMessage) {
+        return () => {
+            learnAws(baseurl, tuburl, tubname, onMessage);
+        }
+    }
     render() {
         return (
             <div>
@@ -38,8 +43,9 @@ class Tubes extends Component {
 //                return <li className="list-group-item" key={idx}><a href={`${this.state.apiBaseUrl}${tub.url}`} target='_blank'>{tub.name}</a></li>
                 return <li className="list-group-item" key={idx}>
                     <div className="row">
-                        <div className="col-md-9"><span>{tub.name}</span></div>
+                        <div className="col-md-7"><span>{tub.name}</span></div>
                         <div className="col-md-3"><button className="btn btn-outline-primary" onClick={this.downloadClick(this.state.apiBaseUrl, tub.url, tub.name, this.props.onMessage)}>Download</button></div>
+                        <div className="col-md-2"><button className="btn btn-outline" onClick={this.learnAwsClick(this.state.apiBaseUrl, tub.url, tub.name, this.props.onMessage)}>AWS</button></div>
                     </div>
                 </li>
             })}
