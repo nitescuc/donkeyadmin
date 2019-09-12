@@ -41,13 +41,14 @@ router.post('/:tubId/learn-aws', (req, res) => {
     s3Helper.on('progress', progress => {
         options.io && options.io.emit('tube', {
             type: 'message',
-            message: progress
+            message: `Loaded: ${progress.loaded}`
         })
     });
     s3Helper.on('job_status', status => {
+        const lastStatus = status.SecondaryStatusTransitions[status.SecondaryStatusTransitions.length -1];
         options.io && options.io.emit('tube', {
             type: 'message',
-            message: status.SecondaryStatusTransitions
+            message: `Status: ${lastStatus.Status}-${lastStatus.StatusMessage}
         })
     });
     s3Helper.uploadFolderToZip(folder, `data/${req.params.tubId}/images.zip`).then(() => {
