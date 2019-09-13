@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const config = require('config');
 const {promisify} = require('util');
-const { S3Helper } = require('../src/s3Helper');
+const { S3Helper } = require('@nitescuc/training-aws-helper');
 
 const readdir = promisify(fs.readdir);
 const fsstat = promisify(fs.stat);
