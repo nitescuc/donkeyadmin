@@ -1,5 +1,6 @@
 const zmq = require('zmq');
 const config = require('config');
+const express = require('express');
 const router = express.Router();
 
 let conf;
