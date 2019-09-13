@@ -21,7 +21,7 @@
     "request": "^2.88.0",
     "request-promise-native": "^1.0.5",
     "socket.io": "^2.0.4",
-    "training-aws-helper": "git+https://github.com/nitescuc/training-aws-helper.git",
+    "@nitescuc/training-aws-helper": "git+https://github.com/nitescuc/training-aws-helper.git",
     "zmq": "^2.15.3"
   }
 }
