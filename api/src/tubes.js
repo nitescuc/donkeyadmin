@@ -59,7 +59,7 @@ router.post('/:tubId/learn-aws', (req, res) => {
         console.error('Error', e);
         options.io && options.io.emit('tube', {
             type: 'error',
-            message: e
+            message: e.message || e
         })
     });
 });
