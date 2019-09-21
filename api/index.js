@@ -15,6 +15,10 @@ drive.setup({
     io
 });
 
+const configServerModule = require('./src/configServer');
+
+const configServer = new configServerModule.ConfigServer();
+
 io.on('connection', function(socket){
     console.log('a user connected');
 });
@@ -24,6 +28,7 @@ app.use(cors());
 app.use('/api/tubes', tubes);
 app.use('/api/models', models);
 app.use('/api/drive', drive);
+app.use('/api/config', configServerModule.router);
 
 /*app.use(express.static(path.join(__dirname, '../app/build'), {
     extensions: ['html', 'css', 'js', 'png']
