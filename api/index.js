@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const path = require('path');
 const app = express();
 const http = require('http').Server(app);
@@ -23,7 +24,9 @@ io.on('connection', function(socket){
     console.log('a user connected');
 });
 
-app.use(cors());
+app.use(cors())
+    .use(bodyParser.json())
+    .use(bodyParser.urlencoded({ extended: true }));
 //
 app.use('/api/tubes', tubes);
 app.use('/api/models', models);
