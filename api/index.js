@@ -18,7 +18,7 @@ drive.setup({
 
 const configServerModule = require('./src/configServer');
 
-const configServer = new configServerModule.ConfigServer();
+const configServer = configServerModule.ConfigServer.getServer();
 
 io.on('connection', function(socket){
     console.log('a user connected');

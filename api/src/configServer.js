@@ -37,7 +37,9 @@ router.post('/', async (req, res) => {
     //
     ConfigServer.getServer().setConfig(req.body);
 
-    res.json('ok');
+    res.json({
+        status: 'ok'
+    });
 });
 
 module.exports = { ConfigServer, router };
