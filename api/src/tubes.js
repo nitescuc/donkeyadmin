@@ -41,7 +41,8 @@ router.post('/:tubId/learn-aws', (req, res) => {
         RoleArn: 'arn:aws:iam::263430657496:role/service-role/AmazonSageMaker-ExecutionRole-20180512T173485',
         HyperParameters: {
             'enhance_image_count': '50000',
-            'use_generator': 'false'
+            'use_generator': 'false',
+            'slide': '4'
         },
         EnableManagedSpotTraining: true
     });
