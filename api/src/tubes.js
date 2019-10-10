@@ -40,8 +40,9 @@ router.post('/:tubId/learn-aws', (req, res) => {
         TrainingImage: '263430657496.dkr.ecr.eu-west-1.amazonaws.com/robocars:1.12.3-gpu-py3',
         RoleArn: 'arn:aws:iam::263430657496:role/service-role/AmazonSageMaker-ExecutionRole-20180512T173485',
         HyperParameters: {
-            'enhance_image_count': '50000',
-            'use_generator': 'false'
+            'enhance_image_count': config.get('training.enhance_image_count'),
+            'use_generator': 'false',
+            'slide': config.get('training.slide')
         },
         EnableManagedSpotTraining: true
     });

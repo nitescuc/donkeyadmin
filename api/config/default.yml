@@ -10,3 +10,6 @@ car:
   pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
 configServer:
   bind: 'tcp://*:5556'
+training:
+  slide: '2'
+  enhance_image_count: '50000'
