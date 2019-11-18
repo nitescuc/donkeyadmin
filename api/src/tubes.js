@@ -42,7 +42,10 @@ router.post('/:tubId/learn-aws', (req, res) => {
         HyperParameters: {
             'enhance_image_count': config.get('training.enhance_image_count'),
             'use_generator': 'false',
-            'slide': config.get('training.slide')
+            'slide': config.get('training.slide'),
+            'crop': config.get('training.crop'),
+            'break_range': config.get('training.break_range'),
+            'clahe': config.get('training.clahe')
         },
         EnableManagedSpotTraining: true
     });

@@ -13,3 +13,6 @@ configServer:
 training:
   slide: '2'
   enhance_image_count: '50000'
+  break_range: '15'
+  clahe: 'true'
+  crop: '100'
