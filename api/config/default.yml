@@ -16,3 +16,4 @@ training:
   break_range: '15'
   apply_clahe: 'true'
   crop: '100'
+  model_name: 'model'
