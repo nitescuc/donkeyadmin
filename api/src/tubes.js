@@ -46,7 +46,7 @@ router.post('/:tubId/learn-aws', (req, res) => {
             'crop': config.get('training.crop'),
             'break_range': config.get('training.break_range'),
             'apply_clahe': config.get('training.apply_clahe'),
-            'model_name': config.get('training.model_name')
+            'model_name': `"${config.get('training.model_name')}"`
         },
         EnableManagedSpotTraining: true
     });
