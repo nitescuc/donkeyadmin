@@ -1,4 +1,4 @@
-const mqtt = require('mqtt ');
+const mqtt = require('mqtt');
 const config = require('config');
 const express = require('express');
 const router = express.Router();
