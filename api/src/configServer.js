@@ -21,7 +21,7 @@ class ConfigServer {
         });
         client.on('connect', () => {
             console.log('Mqtt connected');
-            client.publish('config', JSON.stringify(payload));
+            client.publish('config', JSON.stringify(payload), () => client.end());
         })
     }
 }
