@@ -1,4 +1,4 @@
-const zmq = require('zmq');
+const mqtt = require('mqtt ');
 const config = require('config');
 const express = require('express');
 const router = express.Router();
@@ -7,13 +7,9 @@ let conf;
 
 class ConfigServer {
     constructor() {
-        this.publisher = zmq.socket('pub');
-        
-        this.publisher.bind(config.configServer.bind, function(err) {
-            if(err)
-                console.log(err);
-            else
-                console.log('Listening on ', config.configServer.bind);
+        this.client = mqtt.connect(config.configServer.brokerUrl);
+        this.client.on('error', e => {
+            console.error('MQTT error:', e);
         });
     }
 
@@ -23,7 +19,7 @@ class ConfigServer {
     }
 
     setConfig(payload) {
-        this.publisher.send(['config', JSON.stringify(payload)]);
+        this.client.publish('config', JSON.stringify(payload));
     }
 }
 

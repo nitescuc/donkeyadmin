@@ -9,7 +9,7 @@ car:
   cwd: '/home/pi'
   pythonPath: '/home/pi/.virtualenvs/dk/bin/python3'
 configServer:
-  bind: 'tcp://*:5556'
+  brokerUrl: '127.0.0.1:1883'
 training:
   slide: '2'
   enhance_image_count: '50000'
