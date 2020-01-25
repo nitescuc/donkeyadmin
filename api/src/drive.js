@@ -133,14 +133,16 @@ router.post('/model/:model_id', async (req, res) => {
             model_path
         });
 
-        await request({
-            method: 'POST',
-            uri: `${config.get('api.baseUrl')}/config`,
-            body: {
-                model_path
-            },
-            json: true
-        })
+        if (config.get('api.baseUrl')) {
+            await request({
+                method: 'POST',
+                uri: `${config.get('api.baseUrl')}/config`,
+                body: {
+                    model_path
+                },
+                json: true
+            })
+        }
     }
     res.json({
         status: 'OK'

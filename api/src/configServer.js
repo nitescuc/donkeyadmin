@@ -7,10 +7,6 @@ let conf;
 
 class ConfigServer {
     constructor() {
-        this.client = mqtt.connect(config.configServer.brokerUrl);
-        this.client.on('error', e => {
-            console.error('MQTT error:', e);
-        });
     }
 
     static getServer() {
@@ -19,7 +15,14 @@ class ConfigServer {
     }
 
     setConfig(payload) {
-        this.client.publish('config', JSON.stringify(payload));
+        const client = mqtt.connect(config.configServer.brokerUrl);
+        client.on('error', e => {
+            console.error('MQTT error:', e);
+        });
+        client.on('connect', () => {
+            console.log('Mqtt connected');
+            client.publish('config', JSON.stringify(payload));
+        })
     }
 }
 
